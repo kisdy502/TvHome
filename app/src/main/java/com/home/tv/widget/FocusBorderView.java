@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 public class FocusBorderView extends View {
     public TvRecyclerView tvRecyclerView;
     public final Scroller scroller;
-    public boolean c;
-    public boolean d;
+    public boolean getFocusAnim;
+    public boolean isClicked;
     public int e;
     public int f;
     public int g;
@@ -28,8 +28,8 @@ public class FocusBorderView extends View {
     public FocusBorderView(Context var1) {
         super(var1);
         this.scroller = new Scroller(var1);
-        this.c = false;
-        this.d = false;
+        this.getFocusAnim = false;
+        this.isClicked = false;
         this.e = 0;
         this.f = 0;
         this.g = 0;
@@ -41,9 +41,9 @@ public class FocusBorderView extends View {
     }
 
     public final void drawFocus(Canvas var1) {
-        if (!this.c) {
+        if (!this.getFocusAnim) {
             TvRecyclerView var2 = this.tvRecyclerView;
-            if (!var2.c && !this.d) {
+            if (!var2.c && !this.isClicked) {
                 final View var18 = var2.g();
                 boolean var3;
                 if (var18 == this.r) {
@@ -146,7 +146,7 @@ public class FocusBorderView extends View {
     }
 
     public void b() {
-        this.c = false;
+        this.getFocusAnim = false;
     }
 
     public final void drawFocusMoveAnim(Canvas var1) {
@@ -161,17 +161,17 @@ public class FocusBorderView extends View {
     }
 
     public final void drawGetFocusOrClickScaleAnim(Canvas var1) {
-        if (this.d) {
+        if (this.isClicked) {
             if (TvRecyclerView.IS_DEBUG) {
                 StringBuilder var2 = new StringBuilder();
                 var2.append("drawGetFocusOrClickScaleAnim: ==isClicked=");
-                var2.append(this.d);
+                var2.append(this.isClicked);
                 var2.append("=GetFocusAnim=");
-                var2.append(this.c);
+                var2.append(this.getFocusAnim);
                 Log.d("TvRecyclerView.FB", var2.toString());
             }
 
-            View var3 = this.tvRecyclerView.f;
+            View var3 = this.tvRecyclerView.g();
             if (var3 == null) {
                 return;
             }
@@ -206,10 +206,10 @@ public class FocusBorderView extends View {
     public void computeScroll() {
         if (this.scroller.computeScrollOffset()) {
             this.tvRecyclerView.f();
-            if (this.c) {
+            if (this.getFocusAnim) {
                 this.scroller.getCurrX();
                 this.scroller.getCurrY();
-            } else if (this.d) {
+            } else if (this.isClicked) {
                 this.scroller.getCurrX();
                 this.scroller.getCurrY();
             }
@@ -217,15 +217,15 @@ public class FocusBorderView extends View {
             this.invalidate();
         } else {
             TvRecyclerView var1;
-            if (this.c) {
-                this.c = false;
+            if (this.getFocusAnim) {
+                this.getFocusAnim = false;
                 var1 = this.tvRecyclerView;
                 if (var1 != null) {
                     var1.setLayerType(var1.mLayerType, (Paint)null);
                     this.invalidate();
                 }
-            } else if (this.d) {
-                this.d = false;
+            } else if (this.isClicked) {
+                this.isClicked = false;
                 var1 = this.tvRecyclerView;
                 if (var1 != null) {
                     var1.setLayerType(var1.mLayerType, (Paint)null);
@@ -253,7 +253,7 @@ public class FocusBorderView extends View {
                     Log.d("TvRecyclerView.FB", "startClickAnim: start click animation");
                 }
 
-                this.d = true;
+                this.isClicked = true;
                 this.r = null;
                 this.scroller.abortAnimation();
                 this.scroller.startScroll(0, 0, 100, 100, 200);
@@ -275,7 +275,7 @@ public class FocusBorderView extends View {
 
     }
 
-    public void e() {
+    public void startFocusAnim() {
         TvRecyclerView var1 = this.tvRecyclerView;
         if (var1 != null) {
             var1.setLayerType(LAYER_TYPE_NONE, (Paint)null);
@@ -284,7 +284,7 @@ public class FocusBorderView extends View {
                     Log.d("TvRecyclerView.FB", "startFocusAnim: start focus animation");
                 }
 
-                this.c = true;
+                this.getFocusAnim = true;
                 this.r = null;
                 this.scroller.abortAnimation();
                 this.scroller.startScroll(0, 0, 100, 100, 245);

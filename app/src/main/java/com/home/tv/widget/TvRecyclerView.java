@@ -59,14 +59,14 @@ public class TvRecyclerView extends RecyclerView {
     public boolean c;
     public float mFocusScale;
     public int mSelectedPosition;
-    public View f;
+    public View mNextFocused;
     public boolean g;
     public int q;
     public int r;
     public int s;
     public int t;
     public boolean u;
-    public View v;
+    public View mFocusedView;
     public TvRecyclerView.OnItemStateListener onItemStateListener;
     public TvRecyclerView.OverstepBorderListener mOverstepBorderListener;
     public TvRecyclerView.OnScrollStateListener mOnScrollStateListener;
@@ -102,18 +102,18 @@ public class TvRecyclerView extends RecyclerView {
                     TvRecyclerView.this.G = false;
                     var2 = TvRecyclerView.this.findFirstVisibleItemPosition();
                     TvRecyclerView var5 = TvRecyclerView.this;
-                    var5.f = var5.getChildAt(var5.mSelectedPosition - var2);
-                    if (TvRecyclerView.this.f != null) {
+                    var5.mNextFocused = var5.getChildAt(var5.mSelectedPosition - var2);
+                    if (TvRecyclerView.this.mNextFocused != null) {
                         if (TvRecyclerView.IS_DEBUG) {
                             Log.d("TvRecyclerView", "onScrolled: start adjust scroll distance");
                         }
 
                         if (TvRecyclerView.this.mAutoProcessFocus) {
                             var5 = TvRecyclerView.this;
-                            var5.a(var5.f, true);
+                            var5.a(var5.mNextFocused, true);
                         } else {
                             TvRecyclerView.this.I = true;
-                            TvRecyclerView.this.f.requestFocus();
+                            TvRecyclerView.this.mNextFocused.requestFocus();
                         }
                     }
                 }
@@ -300,7 +300,7 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public final boolean b(int var1) {
-        View var2 = this.v;
+        View var2 = this.mFocusedView;
         if (var2 == null) {
             return false;
         } else if (var1 == 21) {
@@ -380,12 +380,12 @@ public class TvRecyclerView extends RecyclerView {
             this.postInvalidate();
         } else if (this.c) {
             this.c = false;
-            this.m(this.f);
+            this.m(this.mNextFocused);
             this.setLayerType(this.mLayerType, (Paint) null);
             this.postInvalidate();
             TvRecyclerView.OnItemStateListener var1 = this.onItemStateListener;
             if (var1 != null) {
-                var1.a(true, this.v, this.mSelectedPosition);
+                var1.a(true, this.mFocusedView, this.mSelectedPosition);
             }
         }
 
@@ -415,14 +415,14 @@ public class TvRecyclerView extends RecyclerView {
         if (var2 != null) {
             if (this.mOrientation == HORIZONTAL) {
                 if (var1 == 22) {
-                    var2.b(this.v);
+                    var2.b(this.mFocusedView);
                 } else if (var1 == 21) {
-                    var2.a(this.v);
+                    var2.a(this.mFocusedView);
                 }
             } else if (var1 == 20) {
-                var2.b(this.v);
+                var2.b(this.mFocusedView);
             } else if (var1 == 19) {
-                var2.a(this.v);
+                var2.a(this.mFocusedView);
             }
         }
 
@@ -446,8 +446,8 @@ public class TvRecyclerView extends RecyclerView {
     public boolean dispatchKeyEvent(KeyEvent var1) {
         if (var1.getAction() == 0) {
             int var2 = var1.getKeyCode();
-            if (this.v == null) {
-                this.v = this.getChildAt(this.mSelectedPosition);
+            if (this.mFocusedView == null) {
+                this.mFocusedView = this.getChildAt(this.mSelectedPosition);
             }
 
             label49:
@@ -456,7 +456,7 @@ public class TvRecyclerView extends RecyclerView {
                 boolean var10001;
                 if (var2 == 21) {
                     try {
-                        this.f = FocusFinder.getInstance().findNextFocus(this, this.v, 17);
+                        this.mNextFocused = FocusFinder.getInstance().findNextFocus(this, this.mFocusedView, 17);
                         break label49;
                     } catch (Exception var5) {
                         var10000 = var5;
@@ -464,7 +464,7 @@ public class TvRecyclerView extends RecyclerView {
                     }
                 } else if (var2 == 22) {
                     try {
-                        this.f = FocusFinder.getInstance().findNextFocus(this, this.v, 66);
+                        this.mNextFocused = FocusFinder.getInstance().findNextFocus(this, this.mFocusedView, 66);
                         break label49;
                     } catch (Exception var6) {
                         var10000 = var6;
@@ -472,7 +472,7 @@ public class TvRecyclerView extends RecyclerView {
                     }
                 } else if (var2 == 19) {
                     try {
-                        this.f = FocusFinder.getInstance().findNextFocus(this, this.v, 33);
+                        this.mNextFocused = FocusFinder.getInstance().findNextFocus(this, this.mFocusedView, 33);
                         break label49;
                     } catch (Exception var7) {
                         var10000 = var7;
@@ -484,7 +484,7 @@ public class TvRecyclerView extends RecyclerView {
                     }
 
                     try {
-                        this.f = FocusFinder.getInstance().findNextFocus(this, this.v, 130);
+                        this.mNextFocused = FocusFinder.getInstance().findNextFocus(this, this.mFocusedView, 130);
                         break label49;
                     } catch (Exception var8) {
                         var10000 = var8;
@@ -497,15 +497,15 @@ public class TvRecyclerView extends RecyclerView {
                 var4.append("dispatchKeyEvent: get next focus item error: ");
                 var4.append(var3.getMessage());
                 Log.e("TvRecyclerView", var4.toString());
-                this.f = null;
+                this.mNextFocused = null;
             }
 
             if (IS_DEBUG) {
                 StringBuilder var9 = new StringBuilder();
                 var9.append("dispatchKeyEvent: mNextFocused=");
-                var9.append(this.f);
+                var9.append(this.mNextFocused);
                 var9.append("=nextPos=");
-                var9.append(this.getChildAdapterPosition(this.f));
+                var9.append(this.getChildAdapterPosition(this.mNextFocused));
                 Log.d("TvRecyclerView", var9.toString());
             }
         }
@@ -529,7 +529,7 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public final boolean e(int var1) {
-        View var2 = this.f;
+        View var2 = this.mNextFocused;
         if (var2 == null) {
             if (this.c(var1)) {
                 return true;
@@ -550,7 +550,7 @@ public class TvRecyclerView extends RecyclerView {
                 this.m(var2);
             }
 
-            this.a(this.f, true);
+            this.a(this.mNextFocused, true);
             return true;
         }
     }
@@ -599,7 +599,7 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public View g() {
-        return this.v;
+        return this.mFocusedView;
     }
 
     public final void g(int var1) {
@@ -613,7 +613,7 @@ public class TvRecyclerView extends RecyclerView {
 
     @Override
     public int getChildDrawingOrder(int var1, int var2) {
-        int var3 = this.indexOfChild(this.v);
+        int var3 = this.indexOfChild(this.mFocusedView);
         if (var3 < 0) {
             return var2;
         } else if (var2 < var3) {
@@ -724,7 +724,7 @@ public class TvRecyclerView extends RecyclerView {
         this.c = false;
         this.u = false;
         this.mSelectedPosition = 0;
-        this.f = null;
+        this.mNextFocused = null;
         this.g = false;
         this.mFocusScale = 1.04F;
         this.mAutoProcessFocus = true;
@@ -775,7 +775,7 @@ public class TvRecyclerView extends RecyclerView {
             this.c = true;
             TvRecyclerView.OnItemStateListener var2 = this.onItemStateListener;
             if (var2 != null) {
-                var2.a(false, this.v, this.mSelectedPosition);
+                var2.a(false, this.mFocusedView, this.mSelectedPosition);
             }
 
             this.mScroller.startScroll(0, 0, 100, 100, 200);
@@ -822,7 +822,7 @@ public class TvRecyclerView extends RecyclerView {
 
     public final void m(View var1) {
         if (var1 != null) {
-            this.v = var1;
+            this.mFocusedView = var1;
             this.mSelectedPosition = this.getChildAdapterPosition(var1);
         }
 
@@ -859,11 +859,11 @@ public class TvRecyclerView extends RecyclerView {
         }
 
         if (this.onItemStateListener != null) {
-            if (this.v == null) {
-                this.v = this.getChildAt(this.mSelectedPosition - this.findFirstVisibleItemPosition());
+            if (this.mFocusedView == null) {
+                this.mFocusedView = this.getChildAt(this.mSelectedPosition - this.findFirstVisibleItemPosition());
             }
 
-            this.onItemStateListener.a(var1, this.v, this.mSelectedPosition);
+            this.onItemStateListener.a(var1, this.mFocusedView, this.mSelectedPosition);
         }
 
         FocusBorderView var5 = this.mFocusBorderView;
@@ -873,7 +873,7 @@ public class TvRecyclerView extends RecyclerView {
                 this.mFocusBorderView.bringToFront();
             }
 
-            View var6 = this.v;
+            View var6 = this.mFocusedView;
             if (var6 != null) {
                 if (var1) {
                     var6.setSelected(true);
@@ -882,7 +882,7 @@ public class TvRecyclerView extends RecyclerView {
                 }
 
                 if (var1 && !this.g) {
-                    this.mFocusBorderView.e();
+                    this.mFocusBorderView.startFocusAnim();
                 }
             }
 
@@ -920,13 +920,13 @@ public class TvRecyclerView extends RecyclerView {
     @Override
     public boolean onKeyUp(int var1, KeyEvent var2) {
         if ((var1 == 23 || var1 == 66) && this.u) {
-            if (this.getAdapter() != null && this.v != null && this.onItemStateListener != null) {
+            if (this.getAdapter() != null && this.mFocusedView != null && this.onItemStateListener != null) {
                 FocusBorderView var3 = this.mFocusBorderView;
                 if (var3 != null) {
                     var3.d();
                 }
 
-                this.onItemStateListener.a(this.v, this.mSelectedPosition);
+                this.onItemStateListener.a(this.mFocusedView, this.mSelectedPosition);
             }
 
             this.u = false;
@@ -953,14 +953,14 @@ public class TvRecyclerView extends RecyclerView {
             selectPos = 0;
         }
 
-        this.v = this.getChildAt(selectPos);
+        this.mFocusedView = this.getChildAt(selectPos);
         this.g = false;
         if (IS_DEBUG) {
             StringBuilder var7 = new StringBuilder();
             var7.append("onLayout: selectPos=");
             var7.append(selectPos);
             var7.append("=SelectedItem=");
-            var7.append(this.v);
+            var7.append(this.mFocusedView);
             Log.d("TvRecyclerView", var7.toString());
         }
     }
@@ -995,7 +995,7 @@ public class TvRecyclerView extends RecyclerView {
             Log.d(TAG, "focused child position:" + var3);
             if ((this.mSelectedPosition != var3 || this.I) && !this.G) {
                 this.mSelectedPosition = var3;
-                this.v = focused;
+                this.mFocusedView = focused;
                 int var4 = this.f(focused);
                 var3 = var4;
                 if (this.I) {
@@ -1069,12 +1069,12 @@ public class TvRecyclerView extends RecyclerView {
 
             if (temp >= first && temp <= last) {
                 View var5 = this.getChildAt(temp - first);
-                this.f = var5;
+                this.mNextFocused = var5;
                 if (this.mAutoProcessFocus && !this.c) {
                     Log.d(TAG, "setItemSelectedx1:" + mSelectedPosition + "," + position);
                     this.a(var5, true);
                 } else {
-                    this.f.requestFocus();
+                    this.mNextFocused.requestFocus();
                 }
             } else {
                 Log.i(TAG, "setItemSelectedx2:" + mSelectedPosition + "," + position);
@@ -1214,12 +1214,14 @@ public class TvRecyclerView extends RecyclerView {
             TvRecyclerView.this.xSmoothScroller = null;
             int targetPos = this.getTargetPosition();
             View targetView = this.findViewByPosition(targetPos);
-            StringBuilder var3 = new StringBuilder();
-            var3.append("PendingMoveSmoothScroller onStop: targetPos=");
-            var3.append(targetPos);
-            var3.append("==targetView=");
-            var3.append(targetView);
-            Log.i("TvRecyclerView", var3.toString());
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("PendingMoveSmoothScroller onStop: targetPos=");
+            sb.append(targetPos);
+            sb.append("==targetView=");
+            sb.append(targetView);
+            Log.i("TvRecyclerView", sb.toString());
+
             if (targetView == null) {
                 super.onStop();
             } else {
@@ -1230,7 +1232,7 @@ public class TvRecyclerView extends RecyclerView {
                 if (!TvRecyclerView.this.mAutoProcessFocus) {
                     targetView.requestFocus();
                 } else {
-                    TvRecyclerView.this.f = targetView;
+                    TvRecyclerView.this.mNextFocused = targetView;
                     TvRecyclerView.this.a(targetView, true);
                 }
 
