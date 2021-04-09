@@ -65,7 +65,7 @@ public class TvRecyclerView extends RecyclerView {
     public int r;
     public int s;
     public int t;
-    public boolean u;
+    public boolean keyEnterPressed;
     public View mFocusedView;
     public TvRecyclerView.OnItemStateListener onItemStateListener;
     public TvRecyclerView.OverstepBorderListener mOverstepBorderListener;
@@ -721,7 +721,7 @@ public class TvRecyclerView extends RecyclerView {
     public final void j() {
         this.mScroller = new Scroller(this.getContext());
         this.c = false;
-        this.u = false;
+        this.keyEnterPressed = false;
         this.mSelectedPosition = 0;
         this.mNextFocused = null;
         this.g = false;
@@ -893,32 +893,31 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     @Override
-    public boolean onKeyDown(int var1, KeyEvent var2) {
-        if (var1 != 66) {
-            switch (var1) {
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode != KeyEvent.KEYCODE_ENTER) {
+            switch (keyCode) {
                 case 19:
                 case 20:
                 case 21:
                 case 22:
-                    if (this.e(var1)) {
+                    if (this.e(keyCode)) {
                         return true;
                     }
-
-                    return super.onKeyDown(var1, var2);
+                    return super.onKeyDown(keyCode, event);
                 case 23:
                     break;
                 default:
-                    return super.onKeyDown(var1, var2);
+                    return super.onKeyDown(keyCode, event);
             }
         }
 
-        this.u = true;
-        return super.onKeyDown(var1, var2);
+        this.keyEnterPressed = true;
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
-    public boolean onKeyUp(int var1, KeyEvent var2) {
-        if ((var1 == 23 || var1 == 66) && this.u) {
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if ((keyCode == 23 || keyCode == 66) && this.keyEnterPressed) {
             if (this.getAdapter() != null && this.mFocusedView != null && this.onItemStateListener != null) {
                 FocusBorderView var3 = this.mFocusBorderView;
                 if (var3 != null) {
@@ -928,13 +927,13 @@ public class TvRecyclerView extends RecyclerView {
                 this.onItemStateListener.a(this.mFocusedView, this.mSelectedPosition);
             }
 
-            this.u = false;
+            this.keyEnterPressed = false;
             if (this.mAutoProcessFocus) {
                 return true;
             }
         }
 
-        return super.onKeyUp(var1, var2);
+        return super.onKeyUp(keyCode, event);
     }
 
     @Override
