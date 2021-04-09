@@ -373,7 +373,7 @@ public class TvRecyclerView extends RecyclerView {
             }
         }
     }
-
+    @Override
     public void computeScroll() {
         if (this.z.computeScrollOffset()) {
             if (this.c) {
@@ -430,7 +430,7 @@ public class TvRecyclerView extends RecyclerView {
         }
 
     }
-
+    @Override
     public void dispatchDraw(Canvas var1) {
         super.dispatchDraw(var1);
         FocusBorderView var2 = this.a;
@@ -443,7 +443,7 @@ public class TvRecyclerView extends RecyclerView {
         }
 
     }
-
+    @Override
     public boolean dispatchKeyEvent(KeyEvent var1) {
         if (var1.getAction() == 0) {
             int var2 = var1.getKeyCode();
@@ -577,7 +577,7 @@ public class TvRecyclerView extends RecyclerView {
         }
 
     }
-
+    @Override
     public View focusSearch(View var1, int var2) {
         this.F = var2;
         return super.focusSearch(var1, var2);
@@ -610,7 +610,7 @@ public class TvRecyclerView extends RecyclerView {
         }
 
     }
-
+    @Override
     public int getChildDrawingOrder(int var1, int var2) {
         int var3 = this.indexOfChild(this.v);
         if (var3 < 0) {
@@ -702,7 +702,7 @@ public class TvRecyclerView extends RecyclerView {
 
         return var3;
     }
-
+    @Override
     public boolean isInTouchMode() {
         boolean var1 = super.isInTouchMode();
         boolean var2 = var1;
@@ -825,7 +825,7 @@ public class TvRecyclerView extends RecyclerView {
         }
 
     }
-
+    @Override
     public void onFinishInflate() {
         super.onFinishInflate();
         if (this.C) {
@@ -839,6 +839,7 @@ public class TvRecyclerView extends RecyclerView {
 
     }
 
+    @Override
     public void onFocusChanged(boolean var1, int var2, Rect var3) {
         super.onFocusChanged(var1, var2, var3);
         if (K) {
@@ -889,6 +890,7 @@ public class TvRecyclerView extends RecyclerView {
         }
     }
 
+    @Override
     public boolean onKeyDown(int var1, KeyEvent var2) {
         if (var1 != 66) {
             switch (var1) {
@@ -912,6 +914,7 @@ public class TvRecyclerView extends RecyclerView {
         return super.onKeyDown(var1, var2);
     }
 
+    @Override
     public boolean onKeyUp(int var1, KeyEvent var2) {
         if ((var1 == 23 || var1 == 66) && this.u) {
             if (this.getAdapter() != null && this.v != null && this.w != null) {
@@ -932,6 +935,7 @@ public class TvRecyclerView extends RecyclerView {
         return super.onKeyUp(var1, var2);
     }
 
+    @Override
     public void onLayout(boolean var1, int var2, int var3, int var4, int var5) {
         this.g = true;
         super.onLayout(var1, var2, var3, var4, var5);
@@ -959,12 +963,14 @@ public class TvRecyclerView extends RecyclerView {
 
     }
 
+    @Override
     public void onRestoreInstanceState(Parcelable var1) {
         Bundle var2 = (Bundle) var1;
         super.onRestoreInstanceState(var2.getParcelable("super_data"));
         this.setItemSelected(var2.getInt("select_pos", 0));
     }
 
+    @Override
     public Parcelable onSaveInstanceState() {
         Bundle var1 = new Bundle();
         var1.putParcelable("super_data", super.onSaveInstanceState());
@@ -972,6 +978,7 @@ public class TvRecyclerView extends RecyclerView {
         return var1;
     }
 
+    @Override
     public void requestChildFocus(View var1, View var2) {
         super.requestChildFocus(var1, var2);
         if (this.e < 0) {
@@ -1070,6 +1077,7 @@ public class TvRecyclerView extends RecyclerView {
         }
     }
 
+    @Override
     public void setLayoutManager(LayoutManager var1) {
         if (var1 instanceof GridLayoutManager) {
             GridLayoutManager var2 = (GridLayoutManager) var1;
@@ -1175,6 +1183,7 @@ public class TvRecyclerView extends RecyclerView {
 
         }
 
+        @Override
         public PointF computeScrollVectorForPosition(int var1) {
             var1 = this.a;
             if (var1 == 0) {
@@ -1191,6 +1200,7 @@ public class TvRecyclerView extends RecyclerView {
             }
         }
 
+        @Override
         public void onStop() {
             this.a = 0;
             TvRecyclerView.this.A = null;
@@ -1220,6 +1230,7 @@ public class TvRecyclerView extends RecyclerView {
             }
         }
 
+        @Override
         public void updateActionForInterimTarget(Action var1) {
             if (this.a != 0) {
                 super.updateActionForInterimTarget(var1);
