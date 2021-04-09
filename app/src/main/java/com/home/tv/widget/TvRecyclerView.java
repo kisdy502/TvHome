@@ -49,8 +49,8 @@ public class TvRecyclerView extends RecyclerView {
     public int scrollMode;
     public boolean mAutoProcessFocus;
     public int mOrientation;
-    public int F;
-    public boolean G;
+    public int mDirection;
+    public boolean hasSetItemSelected;
     public int mSpanCount;
     public boolean I;
     public int mLayerType;
@@ -83,15 +83,16 @@ public class TvRecyclerView extends RecyclerView {
     public TvRecyclerView(Context var1, AttributeSet var2, int var3) {
         super(var1, var2, var3);
         this.scrollMode = 0;
-        this.G = false;
+        this.hasSetItemSelected = false;
         this.mSpanCount = 1;
         this.I = false;
         this.mLayerType = LAYER_TYPE_SOFTWARE;
         this.j();
         this.a(var2);
         this.addOnScrollListener(new OnScrollListener() {
-            public void onScrolled(RecyclerView var1, int var2, int var3) {
-                if (TvRecyclerView.this.G) {
+
+            public void onScrolled(RecyclerView var1, int dx, int dy) {
+                if (TvRecyclerView.this.hasSetItemSelected) {
                     if (TvRecyclerView.IS_DEBUG) {
                         StringBuilder var4 = new StringBuilder();
                         var4.append("onScrolled: mSelectedPosition=");
@@ -99,10 +100,10 @@ public class TvRecyclerView extends RecyclerView {
                         Log.d("TvRecyclerView", var4.toString());
                     }
 
-                    TvRecyclerView.this.G = false;
-                    var2 = TvRecyclerView.this.findFirstVisibleItemPosition();
+                    TvRecyclerView.this.hasSetItemSelected = false;
+                    int first = TvRecyclerView.this.findFirstVisibleItemPosition();
                     TvRecyclerView var5 = TvRecyclerView.this;
-                    var5.mNextFocused = var5.getChildAt(var5.mSelectedPosition - var2);
+                    var5.mNextFocused = var5.getChildAt(var5.mSelectedPosition - first);
                     if (TvRecyclerView.this.mNextFocused != null) {
                         if (TvRecyclerView.IS_DEBUG) {
                             Log.d("TvRecyclerView", "onScrolled: start adjust scroll distance");
@@ -578,9 +579,9 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     @Override
-    public View focusSearch(View var1, int var2) {
-        this.F = var2;
-        return super.focusSearch(var1, var2);
+    public View focusSearch(View focused, int direction) {
+        this.mDirection = direction;
+        return super.focusSearch(focused, direction);
     }
 
     public final int g(View var1) {
@@ -669,7 +670,7 @@ public class TvRecyclerView extends RecyclerView {
         int var2;
         int var3;
         if (this.mOrientation == HORIZONTAL) {
-            var2 = this.F;
+            var2 = this.mDirection;
             if (var2 != -1 && (var2 == 33 || var2 == 130)) {
                 return 0;
             }
@@ -677,7 +678,7 @@ public class TvRecyclerView extends RecyclerView {
             var3 = var1.getLeft() + var1.getWidth() / 2;
             var2 = this.a() / 2;
         } else {
-            var2 = this.F;
+            var2 = this.mDirection;
             if (var2 != -1 && (var2 == 17 || var2 == 66)) {
                 return 0;
             }
@@ -993,7 +994,7 @@ public class TvRecyclerView extends RecyclerView {
         } else {
             int var3 = this.a(focused);
             Log.d(TAG, "focused child position:" + var3);
-            if ((this.mSelectedPosition != var3 || this.I) && !this.G) {
+            if ((this.mSelectedPosition != var3 || this.I) && !this.hasSetItemSelected) {
                 this.mSelectedPosition = var3;
                 this.mFocusedView = focused;
                 int var4 = this.f(focused);
@@ -1078,7 +1079,7 @@ public class TvRecyclerView extends RecyclerView {
                 }
             } else {
                 Log.i(TAG, "setItemSelectedx2:" + mSelectedPosition + "," + position);
-                this.G = true;
+                this.hasSetItemSelected = true;
                 this.mSelectedPosition = temp;
                 this.scrollToPosition(temp);
             }
