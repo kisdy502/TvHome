@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         tvRecyclerCagegory.setFocusDrawable(getResources().getDrawable(R.drawable.flowview01));
         tvRecyclerChannel.setFocusDrawable(getResources().getDrawable(R.drawable.flowview02));
 
-        tvRecyclerCagegory.setOnItemStateListener(new TvRecyclerView.b() {
+        tvRecyclerCagegory.setOnItemStateListener(new TvRecyclerView.OnItemStateListener() {
             @Override
             public void a(View var1, int var2) {
 
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        tvRecyclerCagegory.setOnScrollStateListener(new TvRecyclerView.e() {
+        tvRecyclerCagegory.setOnScrollStateListener(new TvRecyclerView.OnScrollStateListener() {
             @Override
             public void a(View var1) {
 
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        tvRecyclerCagegory.setOverstepBorderListener(new TvRecyclerView.c() {
+        tvRecyclerCagegory.setOverstepBorderListener(new TvRecyclerView.OverstepBorderListener() {
 
             @Override
             public boolean a(View var1, RecyclerView.ViewHolder var2, int var3) {
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        tvRecyclerChannel.setOnItemStateListener(new TvRecyclerView.b() {
+        tvRecyclerChannel.setOnItemStateListener(new TvRecyclerView.OnItemStateListener() {
             @Override
             public void a(View var1, int var2) {
 
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        tvRecyclerChannel.setOnScrollStateListener(new TvRecyclerView.e() {
+        tvRecyclerChannel.setOnScrollStateListener(new TvRecyclerView.OnScrollStateListener() {
             @Override
             public void a(View var1) {
 
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        tvRecyclerChannel.setOverstepBorderListener(new TvRecyclerView.c() {
+        tvRecyclerChannel.setOverstepBorderListener(new TvRecyclerView.OverstepBorderListener() {
 
             @Override
             public boolean a(View var1, RecyclerView.ViewHolder var2, int var3) {

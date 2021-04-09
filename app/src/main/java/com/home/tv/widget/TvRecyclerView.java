@@ -71,9 +71,9 @@ public class TvRecyclerView extends RecyclerView {
     public int t;
     public boolean u;
     public View v;
-    public TvRecyclerView.b w;
-    public TvRecyclerView.c x;
-    public TvRecyclerView.e y;
+    public TvRecyclerView.OnItemStateListener w;
+    public TvRecyclerView.OverstepBorderListener x;
+    public TvRecyclerView.OnScrollStateListener y;
     public Scroller z;
 
     public TvRecyclerView(Context var1) {
@@ -386,7 +386,7 @@ public class TvRecyclerView extends RecyclerView {
             this.m(this.f);
             this.setLayerType(this.J, (Paint) null);
             this.postInvalidate();
-            TvRecyclerView.b var1 = this.w;
+            TvRecyclerView.OnItemStateListener var1 = this.w;
             if (var1 != null) {
                 var1.a(true, this.v, this.e);
             }
@@ -414,7 +414,7 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public final void d(int var1) {
-        TvRecyclerView.e var2 = this.y;
+        TvRecyclerView.OnScrollStateListener var2 = this.y;
         if (var2 != null) {
             if (this.E == 0) {
                 if (var1 == 22) {
@@ -771,7 +771,7 @@ public class TvRecyclerView extends RecyclerView {
             var1.stopAnimation();
             this.setLayerType(LAYER_TYPE_NONE, (Paint) null);
             this.c = true;
-            TvRecyclerView.b var2 = this.w;
+            TvRecyclerView.OnItemStateListener var2 = this.w;
             if (var2 != null) {
                 var2.a(false, this.v, this.e);
             }
@@ -1095,15 +1095,15 @@ public class TvRecyclerView extends RecyclerView {
         super.setLayoutManager(var1);
     }
 
-    public void setOnItemStateListener(TvRecyclerView.b var1) {
+    public void setOnItemStateListener(TvRecyclerView.OnItemStateListener var1) {
         this.w = var1;
     }
 
-    public void setOnScrollStateListener(TvRecyclerView.e var1) {
+    public void setOnScrollStateListener(TvRecyclerView.OnScrollStateListener var1) {
         this.y = var1;
     }
 
-    public void setOverstepBorderListener(TvRecyclerView.c var1) {
+    public void setOverstepBorderListener(TvRecyclerView.OverstepBorderListener var1) {
         this.x = var1;
     }
 
@@ -1130,13 +1130,13 @@ public class TvRecyclerView extends RecyclerView {
 
     }
 
-    public interface b {
+    public interface OnItemStateListener {
         void a(View var1, int var2);
 
         void a(boolean var1, View var2, int var3);
     }
 
-    public interface c {
+    public interface OverstepBorderListener {
         boolean a(View var1, ViewHolder var2, int var3);
     }
 
@@ -1238,7 +1238,7 @@ public class TvRecyclerView extends RecyclerView {
         }
     }
 
-    public interface e {
+    public interface OnScrollStateListener {
         void a(View var1);
 
         void b(View var1);
