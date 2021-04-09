@@ -150,7 +150,7 @@ public class FocusBorderView extends View {
     }
 
     public final void drawFocusMoveAnim(Canvas var1) {
-        if (this.tvRecyclerView.c && TvRecyclerView.K) {
+        if (this.tvRecyclerView.c && TvRecyclerView.IS_DEBUG) {
             Log.d("TvRecyclerView.FB", "drawFocusMoveAnim: ==============");
         }
 
@@ -162,7 +162,7 @@ public class FocusBorderView extends View {
 
     public final void drawGetFocusOrClickScaleAnim(Canvas var1) {
         if (this.d) {
-            if (TvRecyclerView.K) {
+            if (TvRecyclerView.IS_DEBUG) {
                 StringBuilder var2 = new StringBuilder();
                 var2.append("drawGetFocusOrClickScaleAnim: ==isClicked=");
                 var2.append(this.d);
@@ -248,7 +248,7 @@ public class FocusBorderView extends View {
             }
 
             if (var3 != null) {
-                if (TvRecyclerView.K) {
+                if (TvRecyclerView.IS_DEBUG) {
                     Log.d("TvRecyclerView.FB", "startClickAnim: start click animation");
                 }
 
@@ -279,7 +279,7 @@ public class FocusBorderView extends View {
         if (var1 != null) {
             var1.setLayerType(LAYER_TYPE_NONE, (Paint)null);
             if (this.tvRecyclerView.g() != null) {
-                if (TvRecyclerView.K) {
+                if (TvRecyclerView.IS_DEBUG) {
                     Log.d("TvRecyclerView.FB", "startFocusAnim: start focus animation");
                 }
 

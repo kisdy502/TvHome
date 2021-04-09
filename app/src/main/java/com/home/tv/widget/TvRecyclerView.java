@@ -22,17 +22,12 @@ import android.util.Log;
 import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Scroller;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.LayoutParams;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
-import androidx.recyclerview.widget.RecyclerView.LayoutManager;
-import androidx.recyclerview.widget.RecyclerView.OnScrollListener;
-import androidx.recyclerview.widget.RecyclerView.SmoothScroller.Action;
 
 import com.home.tv.R;
 
@@ -48,17 +43,18 @@ import com.home.tv.R;
 //import androidx.recyclerview.widget.RecyclerView.y.a;   SmoothScroller.Action
 
 public class TvRecyclerView extends RecyclerView {
-    public static boolean K;
-    public TvRecyclerView.d A;
+    private final static String TAG = "TvRecyclerView";
+    public static boolean IS_DEBUG = true;
+    public TvRecyclerView.XSmoothScroller xSmoothScroller;
     public int B;
     public boolean C;
     public int mOrientation;
     public int F;
     public boolean G;
-    public int H;
+    public int mSpanCount;
     public boolean I;
     public int J;
-    public FocusBorderView a;
+    public FocusBorderView mFocusBorderView;
     public Drawable b;
     public boolean c;
     public float d;
@@ -88,7 +84,7 @@ public class TvRecyclerView extends RecyclerView {
         super(var1, var2, var3);
         this.B = 0;
         this.G = false;
-        this.H = 1;
+        this.mSpanCount = 1;
         this.I = false;
         this.J = 1;
         this.j();
@@ -96,7 +92,7 @@ public class TvRecyclerView extends RecyclerView {
         this.addOnScrollListener(new OnScrollListener() {
             public void onScrolled(RecyclerView var1, int var2, int var3) {
                 if (TvRecyclerView.this.G) {
-                    if (TvRecyclerView.K) {
+                    if (TvRecyclerView.IS_DEBUG) {
                         StringBuilder var4 = new StringBuilder();
                         var4.append("onScrolled: mSelectedPosition=");
                         var4.append(TvRecyclerView.this.e);
@@ -108,7 +104,7 @@ public class TvRecyclerView extends RecyclerView {
                     TvRecyclerView var5 = TvRecyclerView.this;
                     var5.f = var5.getChildAt(var5.e - var2);
                     if (TvRecyclerView.this.f != null) {
-                        if (TvRecyclerView.K) {
+                        if (TvRecyclerView.IS_DEBUG) {
                             Log.d("TvRecyclerView", "onScrolled: start adjust scroll distance");
                         }
 
@@ -200,10 +196,10 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public final void a(Context var1) {
-        if (this.a == null) {
-            this.a = new FocusBorderView(var1);
-            ((Activity) var1).getWindow().addContentView(this.a, new LayoutParams(-1, -1));
-            this.a.setSelectPadding(this.q, this.r, this.s, this.t);
+        if (this.mFocusBorderView == null) {
+            this.mFocusBorderView = new FocusBorderView(var1);
+            ((Activity) var1).getWindow().addContentView(this.mFocusBorderView, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            this.mFocusBorderView.setSelectPadding(this.q, this.r, this.s, this.t);
         }
 
     }
@@ -236,7 +232,7 @@ public class TvRecyclerView extends RecyclerView {
 
     public final void a(View var1, boolean var2) {
         int var3 = this.f(var1);
-        if (K) {
+        if (IS_DEBUG) {
             StringBuilder var4 = new StringBuilder();
             var4.append("scrollToView: scrollDistance==");
             var4.append(var3);
@@ -263,7 +259,7 @@ public class TvRecyclerView extends RecyclerView {
             return;
         }
 
-        TvRecyclerView.d var2 = this.A;
+        TvRecyclerView.XSmoothScroller var2 = this.xSmoothScroller;
         if (var2 == null) {
             this.stopScroll();
             Context var4 = this.getContext();
@@ -274,10 +270,10 @@ public class TvRecyclerView extends RecyclerView {
                 var3 = -1;
             }
 
-            var2 = new TvRecyclerView.d(var4, var3);
+            var2 = new TvRecyclerView.XSmoothScroller(var4, var3);
             this.getLayoutManager().startSmoothScroll(var2);
             if (var2.isRunning()) {
-                this.A = var2;
+                this.xSmoothScroller = var2;
             }
         } else if (var1) {
             var2.b();
@@ -373,6 +369,7 @@ public class TvRecyclerView extends RecyclerView {
             }
         }
     }
+
     @Override
     public void computeScroll() {
         if (this.z.computeScrollOffset()) {
@@ -430,19 +427,21 @@ public class TvRecyclerView extends RecyclerView {
         }
 
     }
+
     @Override
     public void dispatchDraw(Canvas var1) {
         super.dispatchDraw(var1);
-        FocusBorderView var2 = this.a;
+        FocusBorderView var2 = this.mFocusBorderView;
         if (var2 != null && var2.c() != null) {
-            if (K) {
+            if (IS_DEBUG) {
                 Log.d("TvRecyclerView", "dispatchDraw: Border view invalidate.");
             }
 
-            this.a.invalidate();
+            this.mFocusBorderView.invalidate();
         }
 
     }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent var1) {
         if (var1.getAction() == 0) {
@@ -501,7 +500,7 @@ public class TvRecyclerView extends RecyclerView {
                 this.f = null;
             }
 
-            if (K) {
+            if (IS_DEBUG) {
                 StringBuilder var9 = new StringBuilder();
                 var9.append("dispatchKeyEvent: mNextFocused=");
                 var9.append(this.f);
@@ -540,7 +539,7 @@ public class TvRecyclerView extends RecyclerView {
                     this.c = false;
                 }
 
-                if (K) {
+                if (IS_DEBUG) {
                     Log.d("TvRecyclerView", "processMoves: error");
                 }
 
@@ -577,6 +576,7 @@ public class TvRecyclerView extends RecyclerView {
         }
 
     }
+
     @Override
     public View focusSearch(View var1, int var2) {
         this.F = var2;
@@ -610,6 +610,7 @@ public class TvRecyclerView extends RecyclerView {
         }
 
     }
+
     @Override
     public int getChildDrawingOrder(int var1, int var2) {
         int var3 = this.indexOfChild(this.v);
@@ -702,6 +703,7 @@ public class TvRecyclerView extends RecyclerView {
 
         return var3;
     }
+
     @Override
     public boolean isInTouchMode() {
         boolean var1 = super.isInTouchMode();
@@ -766,7 +768,7 @@ public class TvRecyclerView extends RecyclerView {
 
     public final void k() {
         this.z.abortAnimation();
-        FocusBorderView var1 = this.a;
+        FocusBorderView var1 = this.mFocusBorderView;
         if (var1 != null) {
             var1.stopAnimation();
             this.setLayerType(LAYER_TYPE_NONE, (Paint) null);
@@ -825,11 +827,12 @@ public class TvRecyclerView extends RecyclerView {
         }
 
     }
+
     @Override
     public void onFinishInflate() {
         super.onFinishInflate();
         if (this.C) {
-            if (K) {
+            if (IS_DEBUG) {
                 Log.d("TvRecyclerView", "onFinishInflate: add fly border view");
             }
 
@@ -842,7 +845,7 @@ public class TvRecyclerView extends RecyclerView {
     @Override
     public void onFocusChanged(boolean var1, int var2, Rect var3) {
         super.onFocusChanged(var1, var2, var3);
-        if (K) {
+        if (IS_DEBUG) {
             StringBuilder var4 = new StringBuilder();
             var4.append("onFocusChanged: gainFocus==");
             var4.append(var1);
@@ -850,9 +853,9 @@ public class TvRecyclerView extends RecyclerView {
         }
 
         if (!var1) {
-            this.a.setVisibility(GONE);
+            this.mFocusBorderView.setVisibility(GONE);
         } else {
-            this.a.setVisibility(VISIBLE);
+            this.mFocusBorderView.setVisibility(VISIBLE);
         }
 
         if (this.w != null) {
@@ -863,11 +866,11 @@ public class TvRecyclerView extends RecyclerView {
             this.w.a(var1, this.v, this.e);
         }
 
-        FocusBorderView var5 = this.a;
+        FocusBorderView var5 = this.mFocusBorderView;
         if (var5 != null) {
             var5.setTvRecyclerView(this);
             if (var1) {
-                this.a.bringToFront();
+                this.mFocusBorderView.bringToFront();
             }
 
             View var6 = this.v;
@@ -879,12 +882,12 @@ public class TvRecyclerView extends RecyclerView {
                 }
 
                 if (var1 && !this.g) {
-                    this.a.e();
+                    this.mFocusBorderView.e();
                 }
             }
 
             if (!var1) {
-                this.a.b();
+                this.mFocusBorderView.b();
             }
 
         }
@@ -918,7 +921,7 @@ public class TvRecyclerView extends RecyclerView {
     public boolean onKeyUp(int var1, KeyEvent var2) {
         if ((var1 == 23 || var1 == 66) && this.u) {
             if (this.getAdapter() != null && this.v != null && this.w != null) {
-                FocusBorderView var3 = this.a;
+                FocusBorderView var3 = this.mFocusBorderView;
                 if (var3 != null) {
                     var3.d();
                 }
@@ -952,7 +955,7 @@ public class TvRecyclerView extends RecyclerView {
 
         this.v = this.getChildAt(var2);
         this.g = false;
-        if (K) {
+        if (IS_DEBUG) {
             StringBuilder var7 = new StringBuilder();
             var7.append("onLayout: selectPos=");
             var7.append(var2);
@@ -1004,7 +1007,7 @@ public class TvRecyclerView extends RecyclerView {
 
                 this.I = false;
                 if (var3 != 0) {
-                    if (K) {
+                    if (IS_DEBUG) {
                         var5 = new StringBuilder();
                         var5.append("requestChildFocus: scroll distance=");
                         var5.append(var3);
@@ -1016,7 +1019,7 @@ public class TvRecyclerView extends RecyclerView {
             }
         }
 
-        if (K) {
+        if (IS_DEBUG) {
             var5 = new StringBuilder();
             var5.append("requestChildFocus: SelectPos=");
             var5.append(this.e);
@@ -1049,7 +1052,7 @@ public class TvRecyclerView extends RecyclerView {
 
             var1 = this.getChildAdapterPosition(this.getChildAt(0));
             int var3 = this.getChildAdapterPosition(this.getChildAt(this.getChildCount() - 1));
-            if (K) {
+            if (IS_DEBUG) {
                 StringBuilder var4 = new StringBuilder();
                 var4.append("setItemSelected: first=");
                 var4.append(var1);
@@ -1082,10 +1085,10 @@ public class TvRecyclerView extends RecyclerView {
         if (var1 instanceof GridLayoutManager) {
             GridLayoutManager var2 = (GridLayoutManager) var1;
             this.mOrientation = var2.getOrientation();
-            this.H = var2.getSpanCount();
+            this.mSpanCount = var2.getSpanCount();
         } else if (var1 instanceof LinearLayoutManager) {
             this.mOrientation = ((LinearLayoutManager) var1).getOrientation();
-            this.H = 1;
+            this.mSpanCount = 1;
         }
 
         StringBuilder var3 = new StringBuilder();
@@ -1116,7 +1119,7 @@ public class TvRecyclerView extends RecyclerView {
         this.r = var2;
         this.s = var3;
         this.t = var4;
-        FocusBorderView var5 = this.a;
+        FocusBorderView var5 = this.mFocusBorderView;
         if (var5 != null) {
             var5.setSelectPadding(var1, var2, var3, var4);
         }
@@ -1127,7 +1130,6 @@ public class TvRecyclerView extends RecyclerView {
         if (var1 >= 1.0F) {
             this.d = var1;
         }
-
     }
 
     public interface OnItemStateListener {
@@ -1140,24 +1142,24 @@ public class TvRecyclerView extends RecyclerView {
         boolean a(View var1, ViewHolder var2, int var3);
     }
 
-    public final class d extends TvSmoothScroller {
+    private final class XSmoothScroller extends TvSmoothScroller {
         public int a;
         public int b = 10;
 
-        public d(Context var2, int var3) {
+        public XSmoothScroller(Context var2, int var3) {
             super(var2);
             this.a = var3;
             var3 = TvRecyclerView.this.e;
             int var4;
             if (this.a > 0) {
-                var4 = var3 + TvRecyclerView.this.H;
+                var4 = var3 + TvRecyclerView.this.mSpanCount;
                 int var5 = TvRecyclerView.this.getAdapter().getItemCount() - 1;
                 var3 = var4;
                 if (var4 > var5) {
                     var3 = var5;
                 }
             } else {
-                var4 = var3 - TvRecyclerView.this.H;
+                var4 = var3 - TvRecyclerView.this.mSpanCount;
                 var3 = var4;
                 if (var4 < 0) {
                     var3 = 0;
@@ -1203,7 +1205,7 @@ public class TvRecyclerView extends RecyclerView {
         @Override
         public void onStop() {
             this.a = 0;
-            TvRecyclerView.this.A = null;
+            TvRecyclerView.this.xSmoothScroller = null;
             int var1 = this.getTargetPosition();
             View var2 = this.findViewByPosition(var1);
             StringBuilder var3 = new StringBuilder();
