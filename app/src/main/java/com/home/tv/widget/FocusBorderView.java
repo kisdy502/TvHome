@@ -221,14 +221,14 @@ public class FocusBorderView extends View {
                 this.c = false;
                 var1 = this.tvRecyclerView;
                 if (var1 != null) {
-                    var1.setLayerType(var1.J, (Paint)null);
+                    var1.setLayerType(var1.mLayerType, (Paint)null);
                     this.invalidate();
                 }
             } else if (this.d) {
                 this.d = false;
                 var1 = this.tvRecyclerView;
                 if (var1 != null) {
-                    var1.setLayerType(var1.J, (Paint)null);
+                    var1.setLayerType(var1.mLayerType, (Paint)null);
                     this.invalidate();
                 }
             }
