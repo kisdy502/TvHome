@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
         channelAdapter = new ChannelAdapter(getApplicationContext(), channelList);
         tvRecyclerCagegory.setAdapter(categoryAdapter);
         tvRecyclerChannel.setAdapter(channelAdapter);
-        tvRecyclerCagegory.setItemSelected(3);
-        tvRecyclerChannel.setItemSelected(6);
+        tvRecyclerCagegory.setItemSelected(5);
+        tvRecyclerChannel.setItemSelected(10);
         tvRecyclerCagegory.setFocusDrawable(getResources().getDrawable(R.drawable.flowview01));
         tvRecyclerChannel.setFocusDrawable(getResources().getDrawable(R.drawable.flowview02));
 

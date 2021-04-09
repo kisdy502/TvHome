@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="32dp"
         android:layout_marginTop="32dp"
+        app:scrollMode="1"
         android:layout_marginBottom="32dp" />
 
     <com.home.tv.widget.TvRecyclerView

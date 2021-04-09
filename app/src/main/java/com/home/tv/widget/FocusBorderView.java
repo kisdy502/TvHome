@@ -181,7 +181,7 @@ public class FocusBorderView extends View {
             int[] var6 = new int[2];
             var3.getLocationInWindow(var6);
             this.getLocationInWindow(new int[2]);
-            Drawable var11 = this.tvRecyclerView.b();
+            Drawable var11 = this.tvRecyclerView.getFocusDrawable();
             if (var11 != null) {
                 int var7 = this.e;
                 int var8 = this.g;
