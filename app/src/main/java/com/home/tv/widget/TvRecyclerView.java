@@ -46,8 +46,8 @@ public class TvRecyclerView extends RecyclerView {
     private final static String TAG = "TvRecyclerView";
     public static boolean IS_DEBUG = true;
     public TvRecyclerView.XSmoothScroller xSmoothScroller;
-    public int B;
-    public boolean C;
+    public int scrollMode;
+    public boolean mAutoProcessFocus;
     public int mOrientation;
     public int F;
     public boolean G;
@@ -55,9 +55,9 @@ public class TvRecyclerView extends RecyclerView {
     public boolean I;
     public int J;
     public FocusBorderView mFocusBorderView;
-    public Drawable b;
+    public Drawable mFocusDrawable;
     public boolean c;
-    public float d;
+    public float mFocusScale;
     public int e;
     public View f;
     public boolean g;
@@ -82,7 +82,7 @@ public class TvRecyclerView extends RecyclerView {
 
     public TvRecyclerView(Context var1, AttributeSet var2, int var3) {
         super(var1, var2, var3);
-        this.B = 0;
+        this.scrollMode = 0;
         this.G = false;
         this.mSpanCount = 1;
         this.I = false;
@@ -108,7 +108,7 @@ public class TvRecyclerView extends RecyclerView {
                             Log.d("TvRecyclerView", "onScrolled: start adjust scroll distance");
                         }
 
-                        if (TvRecyclerView.this.C) {
+                        if (TvRecyclerView.this.mAutoProcessFocus) {
                             var5 = TvRecyclerView.this;
                             var5.a(var5.f, true);
                         } else {
@@ -207,24 +207,24 @@ public class TvRecyclerView extends RecyclerView {
     public final void a(AttributeSet var1) {
         if (var1 != null) {
             TypedArray var4 = this.getContext().obtainStyledAttributes(var1, R.styleable.TvRecyclerView);
-            this.B = var4.getInteger(R.styleable.TvRecyclerView_scrollMode, 0);
+            this.scrollMode = var4.getInteger(R.styleable.TvRecyclerView_scrollMode, 0);
             Drawable var2 = var4.getDrawable(R.styleable.TvRecyclerView_focusDrawable);
             if (var2 != null) {
                 this.setFocusDrawable(var2);
             }
 
-            this.d = var4.getFloat(R.styleable.TvRecyclerView_focusScale, 1.04F);
+            this.mFocusScale = var4.getFloat(R.styleable.TvRecyclerView_focusScale, 1.04F);
             boolean var3 = var4.getBoolean(R.styleable.TvRecyclerView_isAutoProcessFocus, true);
-            this.C = var3;
+            this.mAutoProcessFocus = var3;
             if (!var3) {
-                this.d = 1.0F;
+                this.mFocusScale = 1.0F;
                 this.setChildrenDrawingOrderEnabled(true);
             }
 
             var4.recycle();
         }
 
-        if (this.C) {
+        if (this.mAutoProcessFocus) {
             this.setDescendantFocusability(131072);
         }
 
@@ -296,7 +296,7 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public Drawable b() {
-        return this.b;
+        return this.mFocusDrawable;
     }
 
     public final boolean b(int var1) {
@@ -344,7 +344,7 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public final boolean c(int var1) {
-        if (!this.C) {
+        if (!this.mAutoProcessFocus) {
             return false;
         } else {
             int var2 = this.a(var1);
@@ -534,7 +534,7 @@ public class TvRecyclerView extends RecyclerView {
             if (this.c(var1)) {
                 return true;
             } else {
-                if (this.C) {
+                if (this.mAutoProcessFocus) {
                     this.d(var1);
                     this.c = false;
                 }
@@ -556,11 +556,11 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public float f() {
-        return this.d;
+        return this.mFocusScale;
     }
 
     public final int f(View var1) {
-        int var2 = this.B;
+        int var2 = this.scrollMode;
         if (var2 != 1) {
             return var2 != 2 ? this.b(var1) : this.g(var1);
         } else {
@@ -584,7 +584,7 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public final int g(View var1) {
-        boolean var2 = this.C;
+        boolean var2 = this.mAutoProcessFocus;
         int var3 = 0;
         if (!var2) {
             return 0;
@@ -726,8 +726,8 @@ public class TvRecyclerView extends RecyclerView {
         this.e = 0;
         this.f = null;
         this.g = false;
-        this.d = 1.04F;
-        this.C = true;
+        this.mFocusScale = 1.04F;
+        this.mAutoProcessFocus = true;
         this.q = 22;
         this.r = 22;
         this.s = 22;
@@ -831,7 +831,7 @@ public class TvRecyclerView extends RecyclerView {
     @Override
     public void onFinishInflate() {
         super.onFinishInflate();
-        if (this.C) {
+        if (this.mAutoProcessFocus) {
             if (IS_DEBUG) {
                 Log.d("TvRecyclerView", "onFinishInflate: add fly border view");
             }
@@ -930,7 +930,7 @@ public class TvRecyclerView extends RecyclerView {
             }
 
             this.u = false;
-            if (this.C) {
+            if (this.mAutoProcessFocus) {
                 return true;
             }
         }
@@ -989,7 +989,7 @@ public class TvRecyclerView extends RecyclerView {
         }
 
         StringBuilder var5;
-        if (this.C) {
+        if (this.mAutoProcessFocus) {
             this.requestFocus();
         } else {
             int var3 = this.a(var2);
@@ -1000,7 +1000,7 @@ public class TvRecyclerView extends RecyclerView {
                 var3 = var4;
                 if (this.I) {
                     var3 = var4;
-                    if (this.B != 1) {
+                    if (this.scrollMode != 1) {
                         var3 = this.e(var2);
                     }
                 }
@@ -1029,16 +1029,16 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public void setFocusDrawable(Drawable var1) {
-        this.b = var1;
+        this.mFocusDrawable = var1;
     }
 
     public void setIsAutoProcessFocus(boolean var1) {
-        this.C = var1;
+        this.mAutoProcessFocus = var1;
         if (!var1) {
-            this.d = 1.0F;
+            this.mFocusScale = 1.0F;
             this.setChildrenDrawingOrderEnabled(true);
-        } else if (this.d == 1.0F) {
-            this.d = 1.04F;
+        } else if (this.mFocusScale == 1.0F) {
+            this.mFocusScale = 1.04F;
         }
 
     }
@@ -1066,7 +1066,7 @@ public class TvRecyclerView extends RecyclerView {
             if (var2 >= var1 && var2 <= var3) {
                 View var5 = this.getChildAt(var2 - var1);
                 this.f = var5;
-                if (this.C && !this.c) {
+                if (this.mAutoProcessFocus && !this.c) {
                     this.a(var5, true);
                 } else {
                     this.f.requestFocus();
@@ -1111,7 +1111,7 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public void setScrollMode(int var1) {
-        this.B = var1;
+        this.scrollMode = var1;
     }
 
     public void setSelectPadding(int var1, int var2, int var3, int var4) {
@@ -1128,7 +1128,7 @@ public class TvRecyclerView extends RecyclerView {
 
     public void setSelectedScale(float var1) {
         if (var1 >= 1.0F) {
-            this.d = var1;
+            this.mFocusScale = var1;
         }
     }
 
@@ -1221,7 +1221,7 @@ public class TvRecyclerView extends RecyclerView {
                     TvRecyclerView.this.e = var1;
                 }
 
-                if (!TvRecyclerView.this.C) {
+                if (!TvRecyclerView.this.mAutoProcessFocus) {
                     var2.requestFocus();
                 } else {
                     TvRecyclerView.this.f = var2;

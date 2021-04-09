@@ -63,7 +63,7 @@ public class FocusBorderView extends View {
                     Log.i("TvRecyclerView.FB", var5.toString());
                     int var6 = var18.getWidth();
                     int var7 = var18.getHeight();
-                    float var8 = this.tvRecyclerView.d;
+                    float var8 = this.tvRecyclerView.mFocusScale;
                     LayoutManager var22 = this.tvRecyclerView.getLayoutManager();
                     byte var9 = -1;
                     int var10;
@@ -92,7 +92,7 @@ public class FocusBorderView extends View {
                     var19.append("===itemPositionY===");
                     var19.append(var13);
                     Log.i("TvRecyclerView.FB", var19.toString());
-                    Drawable var20 = this.tvRecyclerView.b;
+                    Drawable var20 = this.tvRecyclerView.mFocusDrawable;
                     var11 = this.e;
                     var10 = this.g;
                     int var14 = this.f;
@@ -202,6 +202,7 @@ public class FocusBorderView extends View {
 
     }
 
+    @Override
     public void computeScroll() {
         if (this.scroller.computeScrollOffset()) {
             this.tvRecyclerView.f();
