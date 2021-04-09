@@ -156,7 +156,7 @@ public class FocusBorderView extends View {
 
     }
 
-    public TvRecyclerView c() {
+    public TvRecyclerView getTvRecyclerView() {
         return this.tvRecyclerView;
     }
 
@@ -236,7 +236,7 @@ public class FocusBorderView extends View {
 
     }
 
-    public void d() {
+    public void startClickAnim() {
         TvRecyclerView var1 = this.tvRecyclerView;
         if (var1 != null) {
             var1.setLayerType(LAYER_TYPE_NONE, (Paint)null);
