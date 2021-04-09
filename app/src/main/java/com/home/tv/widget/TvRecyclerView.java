@@ -52,7 +52,7 @@ public class TvRecyclerView extends RecyclerView {
     public TvRecyclerView.d A;
     public int B;
     public boolean C;
-    public int E;
+    public int mOrientation;
     public int F;
     public boolean G;
     public int H;
@@ -129,7 +129,7 @@ public class TvRecyclerView extends RecyclerView {
     public final int a() {
         int var1;
         int var2;
-        if (this.E == 0) {
+        if (this.mOrientation == HORIZONTAL) {
             var1 = this.getWidth() - this.getPaddingLeft();
             var2 = this.getPaddingRight();
         } else {
@@ -148,7 +148,7 @@ public class TvRecyclerView extends RecyclerView {
             {
                 label66:
                 {
-                    int var2 = this.E;
+                    int var2 = this.mOrientation;
                     var3 = 0;
                     if (var2 == 0) {
                         switch (var1) {
@@ -336,7 +336,7 @@ public class TvRecyclerView extends RecyclerView {
         LayoutParams var2 = (LayoutParams) var1.getLayoutParams();
         int var3;
         int var4;
-        if (this.E == 1) {
+        if (this.mOrientation == VERTICAL) {
             var3 = this.getLayoutManager().getDecoratedBottom(var1);
             var4 = var2.bottomMargin;
         } else {
@@ -395,14 +395,14 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public final int d() {
-        return this.E == 0 ? this.getPaddingLeft() : this.getPaddingTop();
+        return this.mOrientation == HORIZONTAL ? this.getPaddingLeft() : this.getPaddingTop();
     }
 
     public final int d(View var1) {
         LayoutParams var2 = (LayoutParams) var1.getLayoutParams();
         int var3;
         int var4;
-        if (this.E == 1) {
+        if (this.mOrientation == VERTICAL) {
             var3 = this.getLayoutManager().getDecoratedTop(var1);
             var4 = var2.topMargin;
         } else {
@@ -416,7 +416,7 @@ public class TvRecyclerView extends RecyclerView {
     public final void d(int var1) {
         TvRecyclerView.OnScrollStateListener var2 = this.y;
         if (var2 != null) {
-            if (this.E == 0) {
+            if (this.mOrientation == HORIZONTAL) {
                 if (var1 == 22) {
                     var2.b(this.v);
                 } else if (var1 == 21) {
@@ -570,7 +570,7 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public final void f(int var1) {
-        if (this.E == 0) {
+        if (this.mOrientation == HORIZONTAL) {
             this.scrollBy(var1, 0);
         } else {
             this.scrollBy(0, var1);
@@ -603,7 +603,7 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public final void g(int var1) {
-        if (this.E == 0) {
+        if (this.mOrientation == HORIZONTAL) {
             this.smoothScrollBy(var1, 0);
         } else {
             this.smoothScrollBy(0, var1);
@@ -667,7 +667,7 @@ public class TvRecyclerView extends RecyclerView {
     public final int i(View var1) {
         int var2;
         int var3;
-        if (this.E == 0) {
+        if (this.mOrientation == HORIZONTAL) {
             var2 = this.F;
             if (var2 != -1 && (var2 == 33 || var2 == 130)) {
                 return 0;
@@ -730,7 +730,7 @@ public class TvRecyclerView extends RecyclerView {
         this.r = 22;
         this.s = 22;
         this.t = 22;
-        this.E = 0;
+        this.mOrientation = HORIZONTAL;
     }
 
     public final boolean j(View var1) {
@@ -740,7 +740,7 @@ public class TvRecyclerView extends RecyclerView {
         if (var1 != null) {
             Rect var5 = new Rect();
             boolean var6 = var1.getLocalVisibleRect(var5);
-            if (this.E == 0) {
+            if (this.mOrientation == HORIZONTAL) {
                 var4 = var3;
                 if (var6) {
                     var4 = var3;
@@ -788,10 +788,10 @@ public class TvRecyclerView extends RecyclerView {
         Rect var2 = new Rect();
         var1.getGlobalVisibleRect(var2);
         int var3 = this.a();
-        int var4 = this.E;
+        int var4 = this.mOrientation;
         boolean var5 = false;
         boolean var6 = false;
-        if (var4 == 0) {
+        if (var4 == HORIZONTAL) {
             var4 = var2.right;
             var3 /= 2;
             if (var4 > var3 || var2.left < var3) {
@@ -1081,16 +1081,16 @@ public class TvRecyclerView extends RecyclerView {
     public void setLayoutManager(LayoutManager var1) {
         if (var1 instanceof GridLayoutManager) {
             GridLayoutManager var2 = (GridLayoutManager) var1;
-            this.E = var2.getOrientation();
+            this.mOrientation = var2.getOrientation();
             this.H = var2.getSpanCount();
         } else if (var1 instanceof LinearLayoutManager) {
-            this.E = ((LinearLayoutManager) var1).getOrientation();
+            this.mOrientation = ((LinearLayoutManager) var1).getOrientation();
             this.H = 1;
         }
 
         StringBuilder var3 = new StringBuilder();
         var3.append("setLayoutManager: orientation==");
-        var3.append(this.E);
+        var3.append(this.mOrientation);
         Log.i("TvRecyclerView", var3.toString());
         super.setLayoutManager(var1);
     }
@@ -1196,7 +1196,7 @@ public class TvRecyclerView extends RecyclerView {
                     var2 = 1;
                 }
 
-                return TvRecyclerView.this.E == 0 ? new PointF((float) var2, 0.0F) : new PointF(0.0F, (float) var2);
+                return TvRecyclerView.this.mOrientation == HORIZONTAL ? new PointF((float) var2, 0.0F) : new PointF(0.0F, (float) var2);
             }
         }
 
