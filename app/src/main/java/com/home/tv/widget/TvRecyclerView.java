@@ -92,29 +92,27 @@ public class TvRecyclerView extends RecyclerView {
         this.addOnScrollListener(new OnScrollListener() {
 
             public void onScrolled(RecyclerView var1, int dx, int dy) {
-                if (TvRecyclerView.this.hasSetItemSelected) {
+                if (hasSetItemSelected) {
                     if (TvRecyclerView.IS_DEBUG) {
                         StringBuilder var4 = new StringBuilder();
                         var4.append("onScrolled: mSelectedPosition=");
-                        var4.append(TvRecyclerView.this.mSelectedPosition);
+                        var4.append(mSelectedPosition);
                         Log.d("TvRecyclerView", var4.toString());
                     }
 
-                    TvRecyclerView.this.hasSetItemSelected = false;
-                    int first = TvRecyclerView.this.findFirstVisibleItemPosition();
-                    TvRecyclerView var5 = TvRecyclerView.this;
-                    var5.mNextFocused = var5.getChildAt(var5.mSelectedPosition - first);
-                    if (TvRecyclerView.this.mNextFocused != null) {
+                    hasSetItemSelected = false;
+                    int first = findFirstVisibleItemPosition();
+                    mNextFocused = getChildAt(mSelectedPosition - first);
+                    if (mNextFocused != null) {
                         if (TvRecyclerView.IS_DEBUG) {
                             Log.d("TvRecyclerView", "onScrolled: start adjust scroll distance");
                         }
 
-                        if (TvRecyclerView.this.mAutoProcessFocus) {
-                            var5 = TvRecyclerView.this;
-                            var5.a(var5.mNextFocused, true);
+                        if (mAutoProcessFocus) {
+                            a(mNextFocused, true);
                         } else {
-                            TvRecyclerView.this.I = true;
-                            TvRecyclerView.this.mNextFocused.requestFocus();
+                            I = true;
+                            mNextFocused.requestFocus();
                         }
                     }
                 }
@@ -1150,20 +1148,20 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     private final class XSmoothScroller extends TvSmoothScroller {
-        public int a;
+        public int mTargetPosition;
         public int b = 10;
 
-        public XSmoothScroller(Context var2, int var3) {
+        public XSmoothScroller(Context var2, int pos) {
             super(var2);
-            this.a = var3;
-            var3 = TvRecyclerView.this.mSelectedPosition;
+            this.mTargetPosition = pos;
+            int var3 = TvRecyclerView.this.mSelectedPosition;
             int var4;
-            if (this.a > 0) {
+            if (this.mTargetPosition > 0) {
                 var4 = var3 + TvRecyclerView.this.mSpanCount;
-                int var5 = TvRecyclerView.this.getAdapter().getItemCount() - 1;
+                int itemCount = TvRecyclerView.this.getAdapter().getItemCount() - 1;
                 var3 = var4;
-                if (var4 > var5) {
-                    var3 = var5;
+                if (var4 > itemCount) {
+                    var3 = itemCount;
                 }
             } else {
                 var4 = var3 - TvRecyclerView.this.mSpanCount;
@@ -1177,29 +1175,29 @@ public class TvRecyclerView extends RecyclerView {
         }
 
         public void a() {
-            int var1 = this.a;
+            int var1 = this.mTargetPosition;
             if (var1 > -this.b) {
-                this.a = var1 - 1;
+                this.mTargetPosition = var1 - 1;
             }
 
         }
 
         public void b() {
-            int var1 = this.a;
+            int var1 = this.mTargetPosition;
             if (var1 < this.b) {
-                this.a = var1 + 1;
+                this.mTargetPosition = var1 + 1;
             }
 
         }
 
         @Override
-        public PointF computeScrollVectorForPosition(int var1) {
-            var1 = this.a;
-            if (var1 == 0) {
+        public PointF computeScrollVectorForPosition(int targetPosition) {
+            targetPosition = this.mTargetPosition;
+            if (targetPosition == 0) {
                 return null;
             } else {
                 byte var2;
-                if (var1 < 0) {
+                if (targetPosition < 0) {
                     var2 = -1;
                 } else {
                     var2 = 1;
@@ -1211,7 +1209,7 @@ public class TvRecyclerView extends RecyclerView {
 
         @Override
         public void onStop() {
-            this.a = 0;
+            this.mTargetPosition = 0;
             TvRecyclerView.this.xSmoothScroller = null;
             int targetPos = this.getTargetPosition();
             View targetView = this.findViewByPosition(targetPos);
@@ -1243,7 +1241,7 @@ public class TvRecyclerView extends RecyclerView {
 
         @Override
         public void updateActionForInterimTarget(Action var1) {
-            if (this.a != 0) {
+            if (this.mTargetPosition != 0) {
                 super.updateActionForInterimTarget(var1);
             }
         }
