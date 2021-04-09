@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+
+    <declare-styleable name="TvRecyclerView">
+        <attr name="scrollMode" format="integer" />
+        <attr name="focusDrawable" format="reference" />
+        <attr name="focusScale" format="float" />
+        <attr name="isAutoProcessFocus" format="boolean" />
+    </declare-styleable>
+
+
+</resources>
