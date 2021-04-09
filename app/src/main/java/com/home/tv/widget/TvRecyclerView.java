@@ -60,7 +60,7 @@ public class TvRecyclerView extends RecyclerView {
     public float mFocusScale;
     public int mSelectedPosition;
     public View mNextFocused;
-    public boolean g;
+    public boolean isOnLayouting;
     public int q;
     public int r;
     public int s;
@@ -94,10 +94,10 @@ public class TvRecyclerView extends RecyclerView {
             public void onScrolled(RecyclerView var1, int dx, int dy) {
                 if (hasSetItemSelected) {
                     if (TvRecyclerView.IS_DEBUG) {
-                        StringBuilder var4 = new StringBuilder();
-                        var4.append("onScrolled: mSelectedPosition=");
-                        var4.append(mSelectedPosition);
-                        Log.d("TvRecyclerView", var4.toString());
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("onScrolled: mSelectedPosition=");
+                        sb.append(mSelectedPosition);
+                        Log.d("TvRecyclerView", sb.toString());
                     }
 
                     hasSetItemSelected = false;
@@ -184,17 +184,17 @@ public class TvRecyclerView extends RecyclerView {
 
     public final int getViewAdapterPosition(View child) {
         if (child == null) {
-            return -1;
+            return NO_POSITION;
         } else {
             LayoutParams layoutParams = (LayoutParams) child.getLayoutParams();
-            return layoutParams != null && !layoutParams.isItemRemoved() ? layoutParams.getViewAdapterPosition() : -1;
+            return layoutParams != null && !layoutParams.isItemRemoved() ? layoutParams.getViewAdapterPosition() : NO_POSITION;
         }
     }
 
-    public final void a(Context var1) {
+    public final void initFocusBorderView(Context context) {
         if (this.mFocusBorderView == null) {
-            this.mFocusBorderView = new FocusBorderView(var1);
-            ((Activity) var1).getWindow().addContentView(this.mFocusBorderView, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            this.mFocusBorderView = new FocusBorderView(context);
+            ((Activity) context).getWindow().addContentView(this.mFocusBorderView, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             this.mFocusBorderView.setSelectPadding(this.q, this.r, this.s, this.t);
         }
 
@@ -549,12 +549,12 @@ public class TvRecyclerView extends RecyclerView {
         return this.mFocusScale;
     }
 
-    public final int f(View var1) {
+    public final int f(View focused) {
         int var2 = this.scrollMode;
         if (var2 != 1) {
-            return var2 != 2 ? this.b(var1) : this.g(var1);
+            return var2 != 2 ? this.b(focused) : this.g(focused);
         } else {
-            return this.e(var1);
+            return this.e(focused);
         }
     }
 
@@ -715,7 +715,7 @@ public class TvRecyclerView extends RecyclerView {
         this.keyEnterPressed = false;
         this.mSelectedPosition = 0;
         this.mNextFocused = null;
-        this.g = false;
+        this.isOnLayouting = false;
         this.mFocusScale = 1.04F;
         this.mAutoProcessFocus = true;
         this.q = 22;
@@ -827,22 +827,22 @@ public class TvRecyclerView extends RecyclerView {
             }
 
             this.mLayerType = this.getLayerType();
-            this.a(this.getContext());
+            this.initFocusBorderView(this.getContext());
         }
 
     }
 
     @Override
-    public void onFocusChanged(boolean var1, int var2, Rect var3) {
-        super.onFocusChanged(var1, var2, var3);
+    public void onFocusChanged(boolean gainFocus, int var2, Rect var3) {
+        super.onFocusChanged(gainFocus, var2, var3);
         if (IS_DEBUG) {
             StringBuilder var4 = new StringBuilder();
             var4.append("onFocusChanged: gainFocus==");
-            var4.append(var1);
+            var4.append(gainFocus);
             Log.d("TvRecyclerView", var4.toString());
         }
 
-        if (!var1) {
+        if (!gainFocus) {
             this.mFocusBorderView.setVisibility(GONE);
         } else {
             this.mFocusBorderView.setVisibility(VISIBLE);
@@ -853,31 +853,31 @@ public class TvRecyclerView extends RecyclerView {
                 this.mFocusedView = this.getChildAt(this.mSelectedPosition - this.findFirstVisibleItemPosition());
             }
 
-            this.onItemStateListener.a(var1, this.mFocusedView, this.mSelectedPosition);
+            this.onItemStateListener.a(gainFocus, this.mFocusedView, this.mSelectedPosition);
         }
 
         FocusBorderView var5 = this.mFocusBorderView;
         if (var5 != null) {
             var5.setTvRecyclerView(this);
-            if (var1) {
+            if (gainFocus) {
                 this.mFocusBorderView.bringToFront();
             }
 
             View var6 = this.mFocusedView;
             if (var6 != null) {
-                if (var1) {
+                if (gainFocus) {
                     var6.setSelected(true);
                 } else {
                     var6.setSelected(false);
                 }
 
-                if (var1 && !this.g) {
+                if (gainFocus && !this.isOnLayouting) {
                     this.mFocusBorderView.startFocusAnim();
                 }
             }
 
-            if (!var1) {
-                this.mFocusBorderView.b();
+            if (!gainFocus) {
+                this.mFocusBorderView.resetFocusAnim();
             }
 
         }
@@ -929,7 +929,7 @@ public class TvRecyclerView extends RecyclerView {
 
     @Override
     public void onLayout(boolean var1, int var2, int var3, int var4, int var5) {
-        this.g = true;
+        this.isOnLayouting = true;
         super.onLayout(var1, var2, var3, var4, var5);
         Adapter adapter = this.getAdapter();
         if (adapter != null && this.mSelectedPosition >= adapter.getItemCount()) {
@@ -943,30 +943,30 @@ public class TvRecyclerView extends RecyclerView {
         }
 
         this.mFocusedView = this.getChildAt(selectPos);
-        this.g = false;
+        this.isOnLayouting = false;
         if (IS_DEBUG) {
-            StringBuilder var7 = new StringBuilder();
-            var7.append("onLayout: selectPos=");
-            var7.append(selectPos);
-            var7.append("=SelectedItem=");
-            var7.append(this.mFocusedView);
-            Log.d("TvRecyclerView", var7.toString());
+            StringBuilder sb = new StringBuilder();
+            sb.append("onLayout: selectPos=");
+            sb.append(selectPos);
+            sb.append("=SelectedItem=");
+            sb.append(this.mFocusedView);
+            Log.d("TvRecyclerView", sb.toString());
         }
     }
 
     @Override
-    public void onRestoreInstanceState(Parcelable var1) {
-        Bundle var2 = (Bundle) var1;
-        super.onRestoreInstanceState(var2.getParcelable("super_data"));
-        this.setItemSelected(var2.getInt("select_pos", 0));
+    public void onRestoreInstanceState(Parcelable parcelable) {
+        Bundle bundle = (Bundle) parcelable;
+        super.onRestoreInstanceState(bundle.getParcelable("super_data"));
+        this.setItemSelected(bundle.getInt("select_pos", 0));
     }
 
     @Override
     public Parcelable onSaveInstanceState() {
-        Bundle var1 = new Bundle();
-        var1.putParcelable("super_data", super.onSaveInstanceState());
-        var1.putInt("select_pos", this.mSelectedPosition);
-        return var1;
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("super_data", super.onSaveInstanceState());
+        bundle.putInt("select_pos", this.mSelectedPosition);
+        return bundle;
     }
 
     @Override
@@ -980,30 +980,30 @@ public class TvRecyclerView extends RecyclerView {
         if (this.mAutoProcessFocus) {
             this.requestFocus();
         } else {
-            int var3 = getViewAdapterPosition(focused);
-            Log.d(TAG, "focused child position:" + var3);
-            if ((this.mSelectedPosition != var3 || this.I) && !this.hasSetItemSelected) {
-                this.mSelectedPosition = var3;
+            int focusPosition = getViewAdapterPosition(focused);
+            Log.d(TAG, "focused child position:" + focusPosition);
+            if ((this.mSelectedPosition != focusPosition || this.I) && !this.hasSetItemSelected) {
+                this.mSelectedPosition = focusPosition;
                 this.mFocusedView = focused;
                 int var4 = this.f(focused);
-                var3 = var4;
+                focusPosition = var4;
                 if (this.I) {
-                    var3 = var4;
+                    focusPosition = var4;
                     if (this.scrollMode != 1) {
-                        var3 = this.e(focused);
+                        focusPosition = this.e(focused);
                     }
                 }
 
                 this.I = false;
-                if (var3 != 0) {
+                if (focusPosition != 0) {
                     if (IS_DEBUG) {
                         StringBuilder sb = new StringBuilder();
                         sb.append("requestChildFocus: scroll distance=");
-                        sb.append(var3);
+                        sb.append(focusPosition);
                         Log.d("TvRecyclerView", sb.toString());
                     }
 
-                    this.g(var3);
+                    this.g(focusPosition);
                 }
             }
         }

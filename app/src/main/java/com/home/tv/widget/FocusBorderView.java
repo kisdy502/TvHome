@@ -145,7 +145,7 @@ public class FocusBorderView extends View {
 
     }
 
-    public void b() {
+    public void resetFocusAnim() {
         this.getFocusAnim = false;
     }
 
