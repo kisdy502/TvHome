@@ -225,7 +225,7 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public final void scrollDistance(View child, boolean smooth) {
-        int distance = this.f(child);
+        int distance = this.calcDistance(child);
         if (IS_DEBUG) {
             StringBuilder var4 = new StringBuilder();
             var4.append("scrollToView: scrollDistance==");
@@ -548,13 +548,19 @@ public class TvRecyclerView extends RecyclerView {
         return this.mFocusScale;
     }
 
-    public final int f(View focused) {
-        int var2 = this.scrollMode;
-        if (var2 != 1) {
-            return var2 != 2 ? this.b(focused) : this.g(focused);
+    public final int calcDistance(View focused) {
+        int mode = this.scrollMode;
+        int distance = 0;
+        if (mode == 0) {
+            return this.b(focused);
+        } else if (mode == 1) {
+            distance = this.e(focused);
+        } else if (mode == 2) {
+            return this.g(focused);
         } else {
-            return this.e(focused);
+            throw new IllegalArgumentException("not support ScrollMode:" + scrollMode);
         }
+        return distance;
     }
 
     public final void scrollOffset(int offset) {
@@ -903,35 +909,29 @@ public class TvRecyclerView extends RecyclerView {
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) && this.keyEnterPressed) {
             if (this.getAdapter() != null && this.mFocusedView != null && this.onItemStateListener != null) {
-                FocusBorderView var3 = this.mFocusBorderView;
-                if (var3 != null) {
-                    var3.startClickAnim();
+                if (mFocusBorderView != null) {
+                    mFocusBorderView.startClickAnim();
                 }
-
                 this.onItemStateListener.a(this.mFocusedView, this.mSelectedPosition);
             }
-
             this.keyEnterPressed = false;
             if (this.mAutoProcessFocus) {
                 return true;
             }
         }
-
         return super.onKeyUp(keyCode, event);
     }
 
     @Override
-    public void onLayout(boolean var1, int var2, int var3, int var4, int var5) {
+    public void onLayout(boolean changed, int l, int t, int r, int b) {
         this.isOnLayouting = true;
-        super.onLayout(var1, var2, var3, var4, var5);
+        super.onLayout(changed, l, t, r, b);
         Adapter adapter = this.getAdapter();
         if (adapter != null && this.mSelectedPosition >= adapter.getItemCount()) {
             this.mSelectedPosition = adapter.getItemCount() - 1;
         }
-
-        var3 = this.mSelectedPosition - this.findFirstVisibleItemPosition();
-        int selectPos = var3;
-        if (var3 < 0) {
+        int selectPos = this.mSelectedPosition - this.findFirstVisibleItemPosition();
+        if (selectPos < 0) {
             selectPos = 0;
         }
 
@@ -979,7 +979,7 @@ public class TvRecyclerView extends RecyclerView {
                 this.mSelectedPosition = focusPosition;
                 this.mFocusedView = focused;
 
-                int distance = this.f(focused);
+                int distance = this.calcDistance(focused);
                 Log.d(TAG, "distance:" + distance);
                 int temp = distance;
                 if (this.I) {
