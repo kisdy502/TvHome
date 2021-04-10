@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
         tvRecyclerCagegory.setOnItemStateListener(new TvRecyclerView.OnItemStateListener() {
             @Override
-            public void a(View var1, int var2) {
-
+            public void onClickItemView(View itemView, int position) {
+                Log.d(TAG, "click position:" + position);
             }
 
             @Override
@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
 
         tvRecyclerChannel.setOnItemStateListener(new TvRecyclerView.OnItemStateListener() {
             @Override
-            public void a(View var1, int var2) {
-
+            public void onClickItemView(View itemView, int position) {
+                Log.i(TAG, "click position:" + position);
             }
 
             @Override

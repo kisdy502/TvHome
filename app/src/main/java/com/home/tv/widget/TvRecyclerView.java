@@ -912,7 +912,7 @@ public class TvRecyclerView extends RecyclerView {
                 if (mFocusBorderView != null) {
                     mFocusBorderView.startClickAnim();
                 }
-                this.onItemStateListener.a(this.mFocusedView, this.mSelectedPosition);
+                this.onItemStateListener.onClickItemView(this.mFocusedView, this.mSelectedPosition);
             }
             this.keyEnterPressed = false;
             if (this.mAutoProcessFocus) {
@@ -1121,7 +1121,7 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public interface OnItemStateListener {
-        void a(View var1, int var2);
+        void onClickItemView(View itemView, int position);
 
         void a(boolean var1, View var2, int var3);
     }
