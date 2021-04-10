@@ -377,7 +377,7 @@ public class TvRecyclerView extends RecyclerView {
             this.setLayerType(this.mLayerType, (Paint) null);
             this.postInvalidate();
             if (onItemStateListener != null) {
-                onItemStateListener.a(true, this.mFocusedView, this.mSelectedPosition);
+                onItemStateListener.onItemFocus(true, this.mFocusedView, this.mSelectedPosition);
             }
         }
 
@@ -760,21 +760,18 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public final void startFocusMoveAnim() {
+        Log.d(TAG, "startFocusMoveAnim: mFocusBorderView is null:" + (mFocusBorderView != null));
         this.mScroller.abortAnimation();
-        FocusBorderView var1 = this.mFocusBorderView;
-        if (var1 != null) {
-            var1.stopAnimation();
+        if (mFocusBorderView != null) {
+            mFocusBorderView.stopAnimation();
             this.setLayerType(LAYER_TYPE_NONE, (Paint) null);
             this.c = true;
-            TvRecyclerView.OnItemStateListener var2 = this.onItemStateListener;
-            if (var2 != null) {
-                var2.a(false, this.mFocusedView, this.mSelectedPosition);
+            if (onItemStateListener != null) {
+                onItemStateListener.onItemFocus(false, this.mFocusedView, this.mSelectedPosition);
             }
 
             this.mScroller.startScroll(0, 0, 100, 100, 200);
             this.invalidate();
-        } else {
-            Log.d("TvRecyclerView", "startFocusMoveAnim: mFocusBorderView is null");
         }
 
     }
@@ -851,8 +848,7 @@ public class TvRecyclerView extends RecyclerView {
             if (this.mFocusedView == null) {
                 this.mFocusedView = this.getChildAt(this.mSelectedPosition - this.findFirstVisibleItemPosition());
             }
-
-            this.onItemStateListener.a(gainFocus, this.mFocusedView, this.mSelectedPosition);
+            this.onItemStateListener.onItemFocus(gainFocus, this.mFocusedView, this.mSelectedPosition);
         }
 
         FocusBorderView var5 = this.mFocusBorderView;
@@ -1123,7 +1119,7 @@ public class TvRecyclerView extends RecyclerView {
     public interface OnItemStateListener {
         void onClickItemView(View itemView, int position);
 
-        void a(boolean var1, View var2, int var3);
+        void onItemFocus(boolean hasFocus, View itemView, int position);
     }
 
     public interface OverstepBorderListener {

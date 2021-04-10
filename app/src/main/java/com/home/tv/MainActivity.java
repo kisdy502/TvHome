@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void a(boolean var1, View var2, int var3) {
-
+            public void onItemFocus(boolean hasFocus, View itemView, int position) {
+                Log.d(TAG, "onItemFocus position:" + position + ",hasFocus:" + hasFocus);
             }
         });
 
@@ -90,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void a(boolean var1, View var2, int var3) {
-
+            public void onItemFocus(boolean hasFocus, View itemView, int position) {
+                Log.i(TAG, "onItemFocus position:" + position + ",hasFocus:" + hasFocus);
             }
         });
 
