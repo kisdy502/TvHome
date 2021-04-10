@@ -43,8 +43,7 @@ public class FocusBorderView extends View {
 
     public final void drawFocus(Canvas var1) {
         if (!this.getFocusAnim) {
-
-            if (!tvRecyclerView.c && !this.isClicked) {
+            if (!tvRecyclerView.startFocusMoveAnim && !this.isClicked) {
                 final View var18 = tvRecyclerView.getFocusedView();
                 boolean var3;
                 if (var18 == this.r) {
@@ -151,7 +150,7 @@ public class FocusBorderView extends View {
     }
 
     public final void drawFocusMoveAnim(Canvas canvas) {
-        if (this.tvRecyclerView.c && TvRecyclerView.IS_DEBUG) {
+        if (this.tvRecyclerView.startFocusMoveAnim && TvRecyclerView.IS_DEBUG) {
             Log.d("TvRecyclerView.FB", "drawFocusMoveAnim: ==============");
         }
 
@@ -238,7 +237,7 @@ public class FocusBorderView extends View {
         TvRecyclerView var1 = this.tvRecyclerView;
         if (var1 != null) {
             var1.setLayerType(LAYER_TYPE_NONE, (Paint) null);
-            int var2 = this.tvRecyclerView.e();
+            int var2 = this.tvRecyclerView.getSelectPosition();
             View var3;
             if (var2 >= 0 && var2 < this.tvRecyclerView.getAdapter().getItemCount()) {
                 var3 = this.tvRecyclerView.getFocusedView();

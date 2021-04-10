@@ -36,7 +36,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.VH> {
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
         Channel channel = channelList.get(position);
-        holder.tvName.setText(channel.getName());
+        holder.tvName.setText(channel.getIndex() + "_" + channel.getName());
     }
 
     @Override

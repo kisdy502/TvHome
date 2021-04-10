@@ -15,7 +15,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    TvRecyclerView tvRecyclerCagegory;
+    TvRecyclerView tvRecyclerCategory;
     TvRecyclerView tvRecyclerChannel;
     private CategoryAdapter categoryAdapter;
     private ChannelAdapter channelAdapter;
@@ -30,22 +30,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        tvRecyclerCagegory = findViewById(R.id.tv_recycler_categorys);
+        tvRecyclerCategory = findViewById(R.id.tv_recycler_categorys);
         tvRecyclerChannel = findViewById(R.id.tv_recycler_channels);
-        tvRecyclerCagegory.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        tvRecyclerCategory.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         tvRecyclerChannel.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         categoryList = Category.initCategoryList();
         channelList = Channel.initChannelList();
         categoryAdapter = new CategoryAdapter(getApplicationContext(), categoryList);
         channelAdapter = new ChannelAdapter(getApplicationContext(), channelList);
-        tvRecyclerCagegory.setAdapter(categoryAdapter);
+        tvRecyclerCategory.setAdapter(categoryAdapter);
         tvRecyclerChannel.setAdapter(channelAdapter);
-        tvRecyclerCagegory.setItemSelected(5);
+        tvRecyclerCategory.setItemSelected(5);
         tvRecyclerChannel.setItemSelected(10);
-        tvRecyclerCagegory.setFocusDrawable(getResources().getDrawable(R.drawable.flowview01));
+        tvRecyclerCategory.setFocusDrawable(getResources().getDrawable(R.drawable.flowview01));
         tvRecyclerChannel.setFocusDrawable(getResources().getDrawable(R.drawable.flowview02));
 
-        tvRecyclerCagegory.setOnItemStateListener(new TvRecyclerView.OnItemStateListener() {
+        tvRecyclerCategory.setOnItemStateListener(new TvRecyclerView.OnItemStateListener() {
             @Override
             public void onClickItemView(View itemView, int position) {
                 Log.d(TAG, "click position:" + position);
@@ -57,24 +57,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        tvRecyclerCagegory.setOnScrollStateListener(new TvRecyclerView.OnScrollStateListener() {
+        tvRecyclerCategory.setOnScrollStateListener(new TvRecyclerView.OnScrollStateListener() {
             @Override
-            public void a(View var1) {
-
+            public void scrollToPrev(View view) {
+                Log.d(TAG,"scrollToPrev");
             }
 
             @Override
-            public void b(View var1) {
-
+            public void scrollToNext(View var1) {
+                Log.d(TAG,"scrollToNext");
             }
         });
 
-        tvRecyclerCagegory.setOverstepBorderListener(new TvRecyclerView.OverstepBorderListener() {
+        tvRecyclerCategory.setOverstepBorderListener(new TvRecyclerView.OverstepBorderListener() {
 
             @Override
-            public boolean a(View var1, RecyclerView.ViewHolder var2, int var3) {
-                Log.d(TAG, "var3:" + var3);
-                if (var3 == 1 || var3 == 3) {
+            public boolean notAllowOverStepBorder(View view, RecyclerView.ViewHolder viewHolder, int direction) {
+                Log.d(TAG, "direction:" + direction);
+                if (direction == 1 || direction == 3) {
                     return true;
                 } else {
                     return false;
@@ -97,25 +97,25 @@ public class MainActivity extends AppCompatActivity {
 
         tvRecyclerChannel.setOnScrollStateListener(new TvRecyclerView.OnScrollStateListener() {
             @Override
-            public void a(View var1) {
-
+            public void scrollToPrev(View view) {
+                Log.i(TAG,"scrollToPrev");
             }
 
             @Override
-            public void b(View var1) {
-
+            public void scrollToNext(View var1) {
+                Log.i(TAG,"scrollToNext");
             }
         });
 
         tvRecyclerChannel.setOverstepBorderListener(new TvRecyclerView.OverstepBorderListener() {
 
             @Override
-            public boolean a(View var1, RecyclerView.ViewHolder var2, int var3) {
-                Log.i(TAG, "var3:" + var3);
-                if (var3 == 1 || var3 == 3) {
-                    return true;
+            public boolean notAllowOverStepBorder(View var1, RecyclerView.ViewHolder var2, int direction) {
+                Log.i(TAG, "direction:" + direction);
+                if (direction == TvRecyclerView.DIRECTION_UP || direction == TvRecyclerView.DIRECTION_DOWN) {
+                    return true;  //1,3 上下焦点无法离开TvRecyclerView
                 } else {
-                    return false;
+                    return false;   ////0,2 左右焦点允许离开TvRecyclerView
                 }
             }
         });

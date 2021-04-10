@@ -44,6 +44,12 @@ import com.home.tv.R;
 
 public class TvRecyclerView extends RecyclerView {
     private final static String TAG = "TvRecyclerView";
+
+    public final static int DIRECTION_LEFT = 0;
+    public final static int DIRECTION_UP = 1;
+    public final static int DIRECTION_RIGHT = 2;
+    public final static int DIRECTION_DOWN = 3;
+
     public static boolean IS_DEBUG = true;
     public TvRecyclerView.XSmoothScroller xSmoothScroller;
     public int scrollMode;
@@ -56,7 +62,7 @@ public class TvRecyclerView extends RecyclerView {
     public int mLayerType;
     public FocusBorderView mFocusBorderView;
     public Drawable mFocusDrawable;
-    public boolean c;
+    public boolean startFocusMoveAnim;
     public float mFocusScale;
     public int mSelectedPosition;
     public View mNextFocused;
@@ -132,7 +138,7 @@ public class TvRecyclerView extends RecyclerView {
         return height;
     }
 
-    public final int a(int var1) {
+    public final int getDirectionByKeyCode(int keyCode) {
         byte var3;
         label64:
         {
@@ -143,26 +149,26 @@ public class TvRecyclerView extends RecyclerView {
                     int orientation = this.mOrientation;
                     var3 = 0;
                     if (orientation == HORIZONTAL) {
-                        switch (var1) {
-                            case 19:
-                                break label65;
-                            case 20:
-                                break label64;
-                            case 21:
-                                return var3;
-                            case 22:
-                                break label66;
+                        switch (keyCode) {
+                            case KeyEvent.KEYCODE_DPAD_UP:
+                                break label65;   //1
+                            case KeyEvent.KEYCODE_DPAD_DOWN:
+                                break label64;   //2
+                            case KeyEvent.KEYCODE_DPAD_LEFT:
+                                return var3;     //0
+                            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                                break label66;   //17
                         }
                     } else if (orientation == VERTICAL) {
-                        switch (var1) {
-                            case 19:
-                                return var3;
-                            case 20:
-                                break label66;
-                            case 21:
-                                break label65;
-                            case 22:
-                                break label64;
+                        switch (keyCode) {
+                            case KeyEvent.KEYCODE_DPAD_UP:
+                                return var3;    //0
+                            case KeyEvent.KEYCODE_DPAD_DOWN:
+                                break label66;  //17
+                            case KeyEvent.KEYCODE_DPAD_LEFT:
+                                break label65;  //1
+                            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                                break label64;  //2
                         }
                     }
 
@@ -227,10 +233,10 @@ public class TvRecyclerView extends RecyclerView {
     public final void scrollDistance(View child, boolean smooth) {
         int distance = this.calcDistance(child);
         if (IS_DEBUG) {
-            StringBuilder var4 = new StringBuilder();
-            var4.append("scrollToView: scrollDistance==");
-            var4.append(distance);
-            Log.d("TvRecyclerView", var4.toString());
+            StringBuilder sb = new StringBuilder();
+            sb.append("scrollToView: scrollDistance==");
+            sb.append(distance);
+            Log.d("TvRecyclerView", sb.toString());
         }
 
         if (distance != 0) {
@@ -249,7 +255,7 @@ public class TvRecyclerView extends RecyclerView {
             if (this.lastItemVisible()) {
                 return;
             }
-        } else if (this.h()) {
+        } else if (this.firstVisible()) {
             return;
         }
 
@@ -278,7 +284,7 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public final int b(View var1) {
-        boolean var2 = this.isViewVisible(var1);
+        boolean var2 = this.isViewPartVisible(var1);
         int var3;
         if (!this.j(var1) && var2) {
             var3 = 0;
@@ -293,20 +299,21 @@ public class TvRecyclerView extends RecyclerView {
         return this.mFocusDrawable;
     }
 
-    public final boolean b(int var1) {
-        View var2 = this.mFocusedView;
-        if (var2 == null) {
+    public final boolean notAllowOverStepBorder(int keyCode) {
+        if (mFocusedView == null) {
             return false;
-        } else if (var1 == 21) {
-            return this.mOverstepBorderListener.a(var2, this.getChildViewHolder(var2), 0);
-        } else if (var1 == 22) {
-            return this.mOverstepBorderListener.a(var2, this.getChildViewHolder(var2), 2);
-        } else if (var1 == 19) {
-            return this.mOverstepBorderListener.a(var2, this.getChildViewHolder(var2), 1);
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            return this.mOverstepBorderListener.notAllowOverStepBorder(mFocusedView, this.getChildViewHolder(mFocusedView), DIRECTION_LEFT);
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            return this.mOverstepBorderListener.notAllowOverStepBorder(mFocusedView, this.getChildViewHolder(mFocusedView), DIRECTION_RIGHT);
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            return this.mOverstepBorderListener.notAllowOverStepBorder(mFocusedView, this.getChildViewHolder(mFocusedView), DIRECTION_UP);
         } else {
-            return var1 == 20 ? this.mOverstepBorderListener.a(var2, this.getChildViewHolder(var2), 3) : false;
+            return keyCode == KeyEvent.KEYCODE_DPAD_DOWN ? this.mOverstepBorderListener.notAllowOverStepBorder(mFocusedView,
+                    this.getChildViewHolder(mFocusedView), DIRECTION_DOWN) : false;
         }
     }
+
 
     public int findFirstVisibleItemPosition() {
         LayoutManager var1 = this.getLayoutManager();
@@ -322,44 +329,32 @@ public class TvRecyclerView extends RecyclerView {
         return var2;
     }
 
-    public final int c(View var1) {
-        LayoutParams var2 = (LayoutParams) var1.getLayoutParams();
-        int var3;
-        int var4;
-        if (this.mOrientation == VERTICAL) {
-            var3 = this.getLayoutManager().getDecoratedBottom(var1);
-            var4 = var2.bottomMargin;
-        } else {
-            var3 = this.getLayoutManager().getDecoratedRight(var1);
-            var4 = var2.rightMargin;
-        }
 
-        return var3 + var4;
-    }
 
-    public final boolean c(int keyCode) {
+    public final boolean handleKeyCode(int keyCode) {
         if (!this.mAutoProcessFocus) {
             return false;
         } else {
-            int var2 = this.a(keyCode);
-            if (var2 == 1) {
+            int direction = this.getDirectionByKeyCode(keyCode);
+            Log.d(TAG, "handleKeyCode:keyCode:" + keyCode + ",direction:" + direction);
+            if (direction == DIRECTION_UP) {
                 if (!this.lastItemVisible()) {
                     this.a(true);
                     return true;
                 } else {
-                    return this.b(keyCode);
+                    return this.notAllowOverStepBorder(keyCode);
                 }
-            } else if (var2 == 0) {
-                if (!this.h()) {
+            } else if (direction == DIRECTION_LEFT) {
+                if (!this.firstVisible()) {
                     this.a(false);
                     return true;
                 } else {
-                    return this.b(keyCode);
+                    return this.notAllowOverStepBorder(keyCode);
                 }
-            } else if (var2 == 2) {
-                return this.b(keyCode);
+            } else if (direction == DIRECTION_RIGHT) {
+                return this.notAllowOverStepBorder(keyCode);
             } else {
-                return var2 == 3 ? this.b(keyCode) : false;
+                return direction == DIRECTION_DOWN ? this.notAllowOverStepBorder(keyCode) : false;
             }
         }
     }
@@ -367,12 +362,12 @@ public class TvRecyclerView extends RecyclerView {
     @Override
     public void computeScroll() {
         if (this.mScroller.computeScrollOffset()) {
-            if (this.c) {
+            if (this.startFocusMoveAnim) {
                 this.mScroller.getCurrX();
             }
             this.postInvalidate();
-        } else if (this.c) {
-            this.c = false;
+        } else if (this.startFocusMoveAnim) {
+            this.startFocusMoveAnim = false;
             this.setFocusedView(this.mNextFocused);
             this.setLayerType(this.mLayerType, (Paint) null);
             this.postInvalidate();
@@ -383,39 +378,55 @@ public class TvRecyclerView extends RecyclerView {
 
     }
 
-    public final int d() {
+    public final int getPaddingStart() {
         return this.mOrientation == HORIZONTAL ? this.getPaddingLeft() : this.getPaddingTop();
     }
 
-    public final int d(View var1) {
-        LayoutParams var2 = (LayoutParams) var1.getLayoutParams();
+    public final int getChildViewStartEdge(View view) {
+        LayoutParams layoutParams = (LayoutParams) view.getLayoutParams();
         int var3;
         int var4;
         if (this.mOrientation == VERTICAL) {
-            var3 = this.getLayoutManager().getDecoratedTop(var1);
-            var4 = var2.topMargin;
+            var3 = this.getLayoutManager().getDecoratedTop(view);
+            var4 = layoutParams.topMargin;
         } else {
-            var3 = this.getLayoutManager().getDecoratedLeft(var1);
-            var4 = var2.leftMargin;
+            var3 = this.getLayoutManager().getDecoratedLeft(view);
+            var4 = layoutParams.leftMargin;
         }
         return var3 - var4;
     }
 
-    public final void d(int var1) {
-        if (mOnScrollStateListener != null) {
-            if (this.mOrientation == HORIZONTAL) {
-                if (var1 == 22) {
-                    mOnScrollStateListener.b(this.mFocusedView);
-                } else if (var1 == 21) {
-                    mOnScrollStateListener.a(this.mFocusedView);
-                }
-            } else if (var1 == 20) {
-                mOnScrollStateListener.b(this.mFocusedView);
-            } else if (var1 == 19) {
-                mOnScrollStateListener.a(this.mFocusedView);
-            }
+    public final int getChildViewEndEdge(View view) {
+        LayoutParams var2 = (LayoutParams) view.getLayoutParams();
+        int var3;
+        int var4;
+        if (this.mOrientation == VERTICAL) {
+            var3 = this.getLayoutManager().getDecoratedBottom(view);
+            var4 = var2.bottomMargin;
+        } else {
+            var3 = this.getLayoutManager().getDecoratedRight(view);
+            var4 = var2.rightMargin;
         }
 
+        return var3 + var4;
+    }
+
+    public final void d(int keyCode) {
+        if (mOnScrollStateListener != null) {
+            if (this.mOrientation == HORIZONTAL) {
+                if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    mOnScrollStateListener.scrollToNext(this.mFocusedView);
+                } else if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    mOnScrollStateListener.scrollToPrev(this.mFocusedView);
+                }
+            } else if (this.mOrientation == VERTICAL) {
+                if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    mOnScrollStateListener.scrollToNext(this.mFocusedView);
+                } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                    mOnScrollStateListener.scrollToPrev(this.mFocusedView);
+                }
+            }
+        }
     }
 
     @Override
@@ -428,7 +439,6 @@ public class TvRecyclerView extends RecyclerView {
 
             this.mFocusBorderView.invalidate();
         }
-
     }
 
     @Override
@@ -502,30 +512,32 @@ public class TvRecyclerView extends RecyclerView {
         return super.dispatchKeyEvent(event);
     }
 
-    public int e() {
+    public int getSelectPosition() {
         return this.mSelectedPosition;
     }
 
-    public final int e(View var1) {
-        int var2;
-        if (this.k(var1)) {
-            var2 = this.i(var1);
+    public final int e(View view) {
+        int offset;
+        if (this.k(view)) {
+            offset = this.i(view);
         } else {
-            var2 = 0;
+            offset = 0;
         }
 
-        return var2;
+        return offset;
     }
 
     public final boolean processMoves(int keyCode) {
         View next_focused = this.mNextFocused;
         if (next_focused == null) {
-            if (this.c(keyCode)) {
+            boolean handled = handleKeyCode(keyCode);
+            Log.d(TAG, "processMoves,handled:" + handled);
+            if (handled) {
                 return true;
             } else {
                 if (this.mAutoProcessFocus) {
                     this.d(keyCode);
-                    this.c = false;
+                    this.startFocusMoveAnim = false;
                 }
 
                 if (IS_DEBUG) {
@@ -535,7 +547,7 @@ public class TvRecyclerView extends RecyclerView {
                 return false;
             }
         } else {
-            if (this.c) {
+            if (this.startFocusMoveAnim) {
                 this.setFocusedView(next_focused);
             }
 
@@ -578,17 +590,15 @@ public class TvRecyclerView extends RecyclerView {
         return super.focusSearch(focused, direction);
     }
 
-    public final int g(View var1) {
-        boolean var2 = this.mAutoProcessFocus;
+    public final int g(View view) {
         int var3 = 0;
-        if (!var2) {
+        if (!mAutoProcessFocus) {
             return 0;
         } else {
-            var2 = this.isViewVisible(var1);
-            if (this.j(var1) || !var2) {
-                var3 = this.h(var1);
+            boolean partVisible = this.isViewPartVisible(view);
+            if (this.j(view) || !partVisible) {
+                var3 = this.h(view);
             }
-
             return var3;
         }
     }
@@ -607,42 +617,42 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     @Override
-    public int getChildDrawingOrder(int var1, int var2) {
-        int var3 = this.indexOfChild(this.mFocusedView);
-        if (var3 < 0) {
-            return var2;
-        } else if (var2 < var3) {
-            return var2;
+    public int getChildDrawingOrder(int childCount, int i) {
+        int index = this.indexOfChild(this.mFocusedView);
+        if (index < 0) {
+            return i;
+        } else if (i < index) {
+            return i;
         } else {
-            int var4 = var3;
-            if (var2 < var1 - 1) {
-                var4 = var3 + var1 - 1 - var2;
+            int targetIndex = index;
+            if (i < childCount - 1) {
+                targetIndex = index + childCount - 1 - i;
             }
 
-            return var4;
+            return targetIndex;
         }
     }
 
-    public final int h(View var1) {
-        int var2 = this.d(var1);
-        int var3 = this.c(var1);
-        int var4 = this.d();
-        int var5 = this.getViewHeight() + var4 - 45;
+    public final int h(View view) {
+        int var2 = this.getChildViewStartEdge(view);
+        int var3 = this.getChildViewEndEdge(view);
+        int paddingStart = this.getPaddingStart();
+        int var5 = this.getViewHeight() + paddingStart - 45;
         View var6 = null;
-        if (var2 >= var4) {
+        if (var2 >= paddingStart) {
             if (var3 > var5) {
                 Object var7 = null;
-                var6 = var1;
-                var1 = (View) var7;
+                var6 = view;
+                view = (View) var7;
             } else {
-                var1 = null;
+                view = null;
             }
         }
 
-        if (var1 != null) {
-            var5 = this.d(var1) - var4 - 45;
+        if (view != null) {
+            var5 = this.getChildViewStartEdge(view) - paddingStart - 45;
         } else if (var6 != null) {
-            var5 = this.c(var6) - var5;
+            var5 = this.getChildViewEndEdge(var6) - var5;
         } else {
             var5 = 0;
         }
@@ -650,14 +660,14 @@ public class TvRecyclerView extends RecyclerView {
         return var5;
     }
 
-    public final boolean h() {
-        int var1 = this.getLayoutManager().getItemCount();
-        boolean var2 = false;
-        if (var1 == 0 || this.findViewHolderForAdapterPosition(0) != null) {
-            var2 = true;
+    public final boolean firstVisible() {
+        int itemCount = this.getLayoutManager().getItemCount();
+        boolean isVisible = false;
+        if (itemCount == 0 || this.findViewHolderForAdapterPosition(0) != null) {
+            isVisible = true;
         }
 
-        return var2;
+        return isVisible;
     }
 
     public final int i(View var1) {
@@ -714,7 +724,7 @@ public class TvRecyclerView extends RecyclerView {
 
     public final void init() {
         this.mScroller = new Scroller(this.getContext());
-        this.c = false;
+        this.startFocusMoveAnim = false;
         this.keyEnterPressed = false;
         this.mSelectedPosition = 0;
         this.mNextFocused = null;
@@ -728,35 +738,32 @@ public class TvRecyclerView extends RecyclerView {
         this.mOrientation = HORIZONTAL;
     }
 
-    public final boolean j(View var1) {
-        boolean var2 = false;
-        boolean var3 = false;
-        boolean var4 = var2;
-        if (var1 != null) {
-            Rect var5 = new Rect();
-            boolean var6 = var1.getLocalVisibleRect(var5);
+    public final boolean j(View view) {
+        boolean result = false;
+        if (view != null) {
+            Rect rect = new Rect();
+            boolean partVisible = view.getLocalVisibleRect(rect);
             if (this.mOrientation == HORIZONTAL) {
-                var4 = var3;
-                if (var6) {
-                    var4 = var3;
-                    if (var5.width() < var1.getWidth()) {
-                        var4 = true;
+                if (partVisible) {
+                    result = false;
+                    if (rect.width() < view.getWidth()) {
+                        result = true;
                     }
                 }
-
-                return var4;
-            }
-
-            var4 = var2;
-            if (var6) {
-                var4 = var2;
-                if (var5.height() < var1.getHeight()) {
-                    var4 = true;
+                return result;
+            } else {
+                if (partVisible) {
+                    result = false;
+                    if (rect.height() < view.getHeight()) {
+                        result = true;
+                    }
                 }
+                return result;
             }
         }
+        return false;
 
-        return var4;
+
     }
 
     public final void startFocusMoveAnim() {
@@ -765,7 +772,7 @@ public class TvRecyclerView extends RecyclerView {
         if (mFocusBorderView != null) {
             mFocusBorderView.stopAnimation();
             this.setLayerType(LAYER_TYPE_NONE, (Paint) null);
-            this.c = true;
+            this.startFocusMoveAnim = true;
             if (onItemStateListener != null) {
                 onItemStateListener.onItemFocus(false, this.mFocusedView, this.mSelectedPosition);
             }
@@ -776,9 +783,9 @@ public class TvRecyclerView extends RecyclerView {
 
     }
 
-    public final boolean k(View var1) {
+    public final boolean k(View view) {
         Rect rect = new Rect();
-        var1.getGlobalVisibleRect(rect);
+        view.getGlobalVisibleRect(rect);
         int viewHeight = this.getViewHeight();
         int orientation = this.mOrientation;
         boolean result = false;
@@ -794,15 +801,14 @@ public class TvRecyclerView extends RecyclerView {
             viewHeight /= 2;
             if (top >= viewHeight) {
                 if (rect.bottom <= viewHeight) {
-                    return result;
+                    return false;
                 }
             }
-            result = true;
-            return result;
+            return true;
         }
     }
 
-    public final boolean isViewVisible(View view) {
+    public final boolean isViewPartVisible(View view) {
         return view != null ? view.getLocalVisibleRect(new Rect()) : false;
     }
 
@@ -851,19 +857,16 @@ public class TvRecyclerView extends RecyclerView {
             this.onItemStateListener.onItemFocus(gainFocus, this.mFocusedView, this.mSelectedPosition);
         }
 
-        FocusBorderView var5 = this.mFocusBorderView;
-        if (var5 != null) {
-            var5.setTvRecyclerView(this);
+        if (mFocusBorderView != null) {
+            mFocusBorderView.setTvRecyclerView(this);
             if (gainFocus) {
                 this.mFocusBorderView.bringToFront();
             }
-
-            View var6 = this.mFocusedView;
-            if (var6 != null) {
+            if (mFocusedView != null) {
                 if (gainFocus) {
-                    var6.setSelected(true);
+                    mFocusedView.setSelected(true);
                 } else {
-                    var6.setSelected(false);
+                    mFocusedView.setSelected(false);
                 }
 
                 if (gainFocus && !this.isOnLayouting) {
@@ -882,15 +885,15 @@ public class TvRecyclerView extends RecyclerView {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode != KeyEvent.KEYCODE_ENTER) {
             switch (keyCode) {
-                case 19:
-                case 20:
-                case 21:
-                case 22:
+                case KeyEvent.KEYCODE_DPAD_UP:
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
                     if (this.processMoves(keyCode)) {
                         return true;
                     }
                     return super.onKeyDown(keyCode, event);
-                case 23:
+                case KeyEvent.KEYCODE_DPAD_CENTER:
                     break;
                 default:
                     return super.onKeyDown(keyCode, event);
@@ -1049,7 +1052,7 @@ public class TvRecyclerView extends RecyclerView {
             if (temp >= first && temp <= last) {
                 View var5 = this.getChildAt(temp - first);
                 this.mNextFocused = var5;
-                if (this.mAutoProcessFocus && !this.c) {
+                if (this.mAutoProcessFocus && !this.startFocusMoveAnim) {
                     Log.d(TAG, "setItemSelectedx1:" + mSelectedPosition + "," + position);
                     this.scrollDistance(var5, true);
                 } else {
@@ -1123,7 +1126,15 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public interface OverstepBorderListener {
-        boolean a(View var1, ViewHolder var2, int var3);
+        /**
+         * 不允许焦点脱离RecyclerView
+         *
+         * @param view
+         * @param viewHolder
+         * @param direction
+         * @return true 不允许  false 允许
+         */
+        boolean notAllowOverStepBorder(View view, ViewHolder viewHolder, int direction);
     }
 
     private final class XSmoothScroller extends TvSmoothScroller {
@@ -1227,9 +1238,9 @@ public class TvRecyclerView extends RecyclerView {
     }
 
     public interface OnScrollStateListener {
-        void a(View var1);
+        void scrollToPrev(View view);
 
-        void b(View var1);
+        void scrollToNext(View view);
     }
 }
 
