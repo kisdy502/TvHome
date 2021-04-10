@@ -246,7 +246,7 @@ public class TvRecyclerView extends RecyclerView {
 
     public final void a(boolean var1) {
         if (var1) {
-            if (this.i()) {
+            if (this.lastItemVisible()) {
                 return;
             }
         } else if (this.h()) {
@@ -337,29 +337,29 @@ public class TvRecyclerView extends RecyclerView {
         return var3 + var4;
     }
 
-    public final boolean c(int var1) {
+    public final boolean c(int keyCode) {
         if (!this.mAutoProcessFocus) {
             return false;
         } else {
-            int var2 = this.a(var1);
+            int var2 = this.a(keyCode);
             if (var2 == 1) {
-                if (!this.i()) {
+                if (!this.lastItemVisible()) {
                     this.a(true);
                     return true;
                 } else {
-                    return this.b(var1);
+                    return this.b(keyCode);
                 }
             } else if (var2 == 0) {
                 if (!this.h()) {
                     this.a(false);
                     return true;
                 } else {
-                    return this.b(var1);
+                    return this.b(keyCode);
                 }
             } else if (var2 == 2) {
-                return this.b(var1);
+                return this.b(keyCode);
             } else {
-                return var2 == 3 ? this.b(var1) : false;
+                return var2 == 3 ? this.b(keyCode) : false;
             }
         }
     }
@@ -373,7 +373,7 @@ public class TvRecyclerView extends RecyclerView {
             this.postInvalidate();
         } else if (this.c) {
             this.c = false;
-            this.m(this.mNextFocused);
+            this.setFocusedView(this.mNextFocused);
             this.setLayerType(this.mLayerType, (Paint) null);
             this.postInvalidate();
             if (onItemStateListener != null) {
@@ -517,14 +517,14 @@ public class TvRecyclerView extends RecyclerView {
         return var2;
     }
 
-    public final boolean e(int var1) {
-        View var2 = this.mNextFocused;
-        if (var2 == null) {
-            if (this.c(var1)) {
+    public final boolean processMoves(int keyCode) {
+        View next_focused = this.mNextFocused;
+        if (next_focused == null) {
+            if (this.c(keyCode)) {
                 return true;
             } else {
                 if (this.mAutoProcessFocus) {
-                    this.d(var1);
+                    this.d(keyCode);
                     this.c = false;
                 }
 
@@ -536,7 +536,7 @@ public class TvRecyclerView extends RecyclerView {
             }
         } else {
             if (this.c) {
-                this.m(var2);
+                this.setFocusedView(next_focused);
             }
 
             this.scrollDistance(this.mNextFocused, true);
@@ -544,7 +544,7 @@ public class TvRecyclerView extends RecyclerView {
         }
     }
 
-    public float f() {
+    public float getScale() {
         return this.mFocusScale;
     }
 
@@ -678,19 +678,17 @@ public class TvRecyclerView extends RecyclerView {
         return var3 - var2;
     }
 
-    public final boolean i() {
-        int var1 = this.getLayoutManager().getItemCount();
-        boolean var2 = true;
-        boolean var3 = var2;
-        if (var1 != 0) {
-            if (this.findViewHolderForAdapterPosition(var1 - 1) != null) {
-                var3 = var2;
+    public final boolean lastItemVisible() {
+        int itemCount = this.getLayoutManager().getItemCount();
+        boolean isVisible = true;
+        if (itemCount != 0) {
+            if (this.findViewHolderForAdapterPosition(itemCount - 1) != null) {
+                isVisible = true;
             } else {
-                var3 = false;
+                isVisible = false;
             }
         }
-
-        return var3;
+        return isVisible;
     }
 
     @Override
@@ -805,10 +803,10 @@ public class TvRecyclerView extends RecyclerView {
         return view != null ? view.getLocalVisibleRect(new Rect()) : false;
     }
 
-    public final void m(View var1) {
-        if (var1 != null) {
-            this.mFocusedView = var1;
-            this.mSelectedPosition = this.getChildAdapterPosition(var1);
+    public final void setFocusedView(View view) {
+        if (view != null) {
+            this.mFocusedView = view;
+            this.mSelectedPosition = this.getChildAdapterPosition(view);
         }
 
     }
@@ -886,7 +884,7 @@ public class TvRecyclerView extends RecyclerView {
                 case 20:
                 case 21:
                 case 22:
-                    if (this.e(keyCode)) {
+                    if (this.processMoves(keyCode)) {
                         return true;
                     }
                     return super.onKeyDown(keyCode, event);

@@ -205,7 +205,7 @@ public class FocusBorderView extends View {
     @Override
     public void computeScroll() {
         if (this.scroller.computeScrollOffset()) {
-            this.tvRecyclerView.f();
+            this.tvRecyclerView.getScale();
             if (this.getFocusAnim) {
                 this.scroller.getCurrX();
                 this.scroller.getCurrY();
@@ -216,19 +216,16 @@ public class FocusBorderView extends View {
 
             this.invalidate();
         } else {
-            TvRecyclerView var1;
             if (this.getFocusAnim) {
                 this.getFocusAnim = false;
-                var1 = this.tvRecyclerView;
-                if (var1 != null) {
-                    var1.setLayerType(var1.mLayerType, (Paint)null);
+                if (tvRecyclerView != null) {
+                    tvRecyclerView.setLayerType(tvRecyclerView.mLayerType, (Paint)null);
                     this.invalidate();
                 }
             } else if (this.isClicked) {
                 this.isClicked = false;
-                var1 = this.tvRecyclerView;
-                if (var1 != null) {
-                    var1.setLayerType(var1.mLayerType, (Paint)null);
+                if (tvRecyclerView != null) {
+                    tvRecyclerView.setLayerType(tvRecyclerView.mLayerType, (Paint)null);
                     this.invalidate();
                 }
             }
