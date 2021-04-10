@@ -587,7 +587,7 @@ public class TvRecyclerView extends RecyclerView {
         }
     }
 
-    public View g() {
+    public View getFocusedView() {
         return this.mFocusedView;
     }
 

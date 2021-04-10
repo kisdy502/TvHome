@@ -44,7 +44,7 @@ public class FocusBorderView extends View {
         if (!this.getFocusAnim) {
             TvRecyclerView var2 = this.tvRecyclerView;
             if (!var2.c && !this.isClicked) {
-                final View var18 = var2.g();
+                final View var18 = var2.getFocusedView();
                 boolean var3;
                 if (var18 == this.r) {
                     var3 = false;
@@ -171,7 +171,7 @@ public class FocusBorderView extends View {
                 Log.d("TvRecyclerView.FB", var2.toString());
             }
 
-            View var3 = this.tvRecyclerView.g();
+            View var3 = this.tvRecyclerView.getFocusedView();
             if (var3 == null) {
                 return;
             }
@@ -243,7 +243,7 @@ public class FocusBorderView extends View {
             int var2 = this.tvRecyclerView.e();
             View var3;
             if (var2 >= 0 && var2 < this.tvRecyclerView.getAdapter().getItemCount()) {
-                var3 = this.tvRecyclerView.g();
+                var3 = this.tvRecyclerView.getFocusedView();
             } else {
                 var3 = null;
             }
@@ -279,7 +279,7 @@ public class FocusBorderView extends View {
         TvRecyclerView var1 = this.tvRecyclerView;
         if (var1 != null) {
             var1.setLayerType(LAYER_TYPE_NONE, (Paint)null);
-            if (this.tvRecyclerView.g() != null) {
+            if (this.tvRecyclerView.getFocusedView() != null) {
                 if (TvRecyclerView.IS_DEBUG) {
                     Log.d("TvRecyclerView.FB", "startFocusAnim: start focus animation");
                 }
