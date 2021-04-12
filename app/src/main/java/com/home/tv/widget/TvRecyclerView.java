@@ -127,7 +127,7 @@ public class TvRecyclerView extends RecyclerView {
         });
     }
 
-    public final int getViewHeight() {
+    public final int getTvRecyclerViewRealSize() {
         int height;
         if (this.mOrientation == HORIZONTAL) {
             height = this.getWidth() - this.getPaddingLeft() - this.getPaddingRight();
@@ -283,16 +283,15 @@ public class TvRecyclerView extends RecyclerView {
 
     }
 
-    public final int b(View var1) {
-        boolean var2 = this.isViewPartVisible(var1);
-        int var3;
-        if (!this.j(var1) && var2) {
-            var3 = 0;
+    public final int getDefaultModeDistance(View view) {
+        boolean visible = this.isViewPartVisible(view);
+        int distance;
+        if (!this.j(view) && visible) {
+            distance = 0;
         } else {
-            var3 = this.i(var1);
+            distance = this.getViewDistance(view);
         }
-
-        return var3;
+        return distance;
     }
 
     public Drawable getFocusDrawable() {
@@ -328,7 +327,6 @@ public class TvRecyclerView extends RecyclerView {
         var2 = -1;
         return var2;
     }
-
 
 
     public final boolean handleKeyCode(int keyCode) {
@@ -516,10 +514,10 @@ public class TvRecyclerView extends RecyclerView {
         return this.mSelectedPosition;
     }
 
-    public final int e(View view) {
+    public final int getCenterModeDistance(View view) {
         int offset;
-        if (this.k(view)) {
-            offset = this.i(view);
+        if (this.isBelowCenterPosition(view)) {
+            offset = this.getDefaultModeDistance(view);
         } else {
             offset = 0;
         }
@@ -564,9 +562,9 @@ public class TvRecyclerView extends RecyclerView {
         int mode = this.scrollMode;
         int distance = 0;
         if (mode == 0) {
-            return this.b(focused);
+            return this.getDefaultModeDistance(focused);
         } else if (mode == 1) {
-            distance = this.e(focused);
+            distance = this.getCenterModeDistance(focused);
         } else if (mode == 2) {
             return this.g(focused);
         } else {
@@ -637,7 +635,7 @@ public class TvRecyclerView extends RecyclerView {
         int var2 = this.getChildViewStartEdge(view);
         int var3 = this.getChildViewEndEdge(view);
         int paddingStart = this.getPaddingStart();
-        int var5 = this.getViewHeight() + paddingStart - 45;
+        int var5 = this.getTvRecyclerViewRealSize() + paddingStart - 45;
         View var6 = null;
         if (var2 >= paddingStart) {
             if (var3 > var5) {
@@ -670,28 +668,29 @@ public class TvRecyclerView extends RecyclerView {
         return isVisible;
     }
 
-    public final int i(View var1) {
-        int var2;
-        int var3;
+    public final int getViewDistance(View view) {
+        int direction;
+        int viewSize;
+        int height;
         if (this.mOrientation == HORIZONTAL) {
-            var2 = this.mDirection;
-            if (var2 != -1 && (var2 == 33 || var2 == 130)) {
+            direction = this.mDirection;
+            if (direction != -1 && (direction == FOCUS_UP || direction == FOCUS_DOWN)) {
                 return 0;
             }
 
-            var3 = var1.getLeft() + var1.getWidth() / 2;
-            var2 = this.getViewHeight() / 2;
+            viewSize = view.getLeft() + view.getWidth() / 2;
+            height = this.getTvRecyclerViewRealSize() / 2;
         } else {
-            var2 = this.mDirection;
-            if (var2 != -1 && (var2 == 17 || var2 == 66)) {
+            direction = this.mDirection;
+            if (direction != -1 && (direction == FOCUS_LEFT || direction == FOCUS_RIGHT)) {
                 return 0;
             }
 
-            var3 = var1.getTop() + var1.getHeight() / 2;
-            var2 = this.getViewHeight() / 2;
+            viewSize = view.getTop() + view.getHeight() / 2;
+            height = this.getTvRecyclerViewRealSize() / 2;
         }
-
-        return var3 - var2;
+        Log.d(TAG, "viewSize:" + viewSize + ",half height" + height + ",clac result:" + (viewSize - height));
+        return viewSize - height;
     }
 
     public final boolean lastItemVisible() {
@@ -783,10 +782,16 @@ public class TvRecyclerView extends RecyclerView {
 
     }
 
-    public final boolean k(View view) {
+    /**
+     * 目标view在RecyclerView中间位置之下
+     *
+     * @param view
+     * @return
+     */
+    public final boolean isBelowCenterPosition(View view) {
         Rect rect = new Rect();
         view.getGlobalVisibleRect(rect);
-        int viewHeight = this.getViewHeight();
+        int viewHeight = this.getTvRecyclerViewRealSize();
         int orientation = this.mOrientation;
         boolean result = false;
         if (orientation == HORIZONTAL) {
@@ -984,7 +989,8 @@ public class TvRecyclerView extends RecyclerView {
                 if (this.I) {
                     temp = distance;
                     if (this.scrollMode != 1) {
-                        temp = this.e(focused);
+                        temp = this.getDefaultModeDistance(focused);
+                        Log.d(TAG, "distance2:" + temp);
                     }
                 }
 
@@ -1102,13 +1108,13 @@ public class TvRecyclerView extends RecyclerView {
         this.scrollMode = mode;
     }
 
-    public void setSelectPadding(int var1, int var2, int var3, int var4) {
-        this.focusBorderPaddingLeft = var1;
-        this.focusBorderPaddingTop = var2;
-        this.focusBorderPaddingRight = var3;
-        this.focusBorderPaddingBottom = var4;
+    public void setSelectPadding(int l, int t, int r, int b) {
+        this.focusBorderPaddingLeft = l;
+        this.focusBorderPaddingTop = t;
+        this.focusBorderPaddingRight = r;
+        this.focusBorderPaddingBottom = b;
         if (mFocusBorderView != null) {
-            mFocusBorderView.setSelectPadding(var1, var2, var3, var4);
+            mFocusBorderView.setSelectPadding(l, t, r, b);
         }
 
     }
@@ -1186,14 +1192,14 @@ public class TvRecyclerView extends RecyclerView {
             if (targetPosition == 0) {
                 return null;
             } else {
-                byte var2;
+                byte pos;
                 if (targetPosition < 0) {
-                    var2 = -1;
+                    pos = -1;
                 } else {
-                    var2 = 1;
+                    pos = 1;
                 }
-                Log.d(TAG, "computeScrollVectorForPosition:" + var2);
-                return mOrientation == HORIZONTAL ? new PointF((float) var2, 0.0F) : new PointF(0.0F, (float) var2);
+                Log.d(TAG, "computeScrollVectorForPosition:" + pos);
+                return mOrientation == HORIZONTAL ? new PointF((float) pos, 0.0F) : new PointF(0.0F, (float) pos);
             }
         }
 
