@@ -16,6 +16,9 @@ import android.widget.Scroller;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 
 public class FocusBorderView extends View {
+    private final static String TAG = "FocusBorderView";
+    private final static boolean IS_DEBUG = false;
+    
     public TvRecyclerView tvRecyclerView;
     public final Scroller scroller;
     public boolean getFocusAnim;
@@ -55,12 +58,14 @@ public class FocusBorderView extends View {
                 if (var18 != null) {
                     int[] var4 = new int[2];
                     var18.getLocationInWindow(var4);
-                    StringBuilder var5 = new StringBuilder();
-                    var5.append("drawFocus: ===itemLocationX===");
-                    var5.append(var4[0]);
-                    var5.append("===itemLocationY==");
-                    var5.append(var4[1]);
-                    Log.i("TvRecyclerView.FB", var5.toString());
+                    if (IS_DEBUG) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("drawFocus: ===itemLocationX===");
+                        sb.append(var4[0]);
+                        sb.append("===itemLocationY==");
+                        sb.append(var4[1]);
+                        Log.i(TAG, sb.toString());
+                    }
                     int var6 = var18.getWidth();
                     int var7 = var18.getHeight();
                     float var8 = this.tvRecyclerView.mFocusScale;
@@ -86,12 +91,14 @@ public class FocusBorderView extends View {
 
                     var8 = (float) var4[0];
                     float var13 = (float) var4[1];
-                    StringBuilder var19 = new StringBuilder();
-                    var19.append("drawFocus: ======itemPositionX=====");
-                    var19.append(var8);
-                    var19.append("===itemPositionY===");
-                    var19.append(var13);
-                    Log.i("TvRecyclerView.FB", var19.toString());
+                    if (IS_DEBUG) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("drawFocus: ======itemPositionX=====");
+                        sb.append(var8);
+                        sb.append("===itemPositionY===");
+                        sb.append(var13);
+                        Log.i(TAG, sb.toString());
+                    }
                     Drawable var20 = this.tvRecyclerView.getFocusDrawable();
                     var11 = this.e;
                     var10 = this.g;
@@ -99,12 +106,16 @@ public class FocusBorderView extends View {
                     int var24 = this.q;
                     float drawPositionX = var8 - (float) var11;
                     float drawPositionY = var13 - (float) var14;
-                    var5 = new StringBuilder();
-                    var5.append("drawFocus: ===drawPositionX==");
-                    var5.append(drawPositionX);
-                    var5.append("===drawPositionY===");
-                    var5.append(drawPositionY);
-                    Log.i("TvRecyclerView.FB", var5.toString());
+
+                    if (IS_DEBUG) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("drawFocus: ===drawPositionX==");
+                        sb.append(drawPositionX);
+                        sb.append("===drawPositionY===");
+                        sb.append(drawPositionY);
+                        Log.i(TAG, sb.toString());
+                    }
+
                     if (var20 != null) {
                         var1.save();
                         var1.translate(drawPositionX, drawPositionY);
@@ -150,8 +161,8 @@ public class FocusBorderView extends View {
     }
 
     public final void drawFocusMoveAnim(Canvas canvas) {
-        if (this.tvRecyclerView.startFocusMoveAnim && TvRecyclerView.IS_DEBUG) {
-            Log.d("TvRecyclerView.FB", "drawFocusMoveAnim: ==============");
+        if (this.tvRecyclerView.startFocusMoveAnim && IS_DEBUG) {
+            Log.d(TAG, "drawFocusMoveAnim: ==============");
         }
 
     }
@@ -162,13 +173,13 @@ public class FocusBorderView extends View {
 
     public final void drawGetFocusOrClickScaleAnim(Canvas canvas) {
         if (this.isClicked) {
-            if (TvRecyclerView.IS_DEBUG) {
-                StringBuilder var2 = new StringBuilder();
-                var2.append("drawGetFocusOrClickScaleAnim: ==isClicked=");
-                var2.append(this.isClicked);
-                var2.append("=GetFocusAnim=");
-                var2.append(this.getFocusAnim);
-                Log.d("TvRecyclerView.FB", var2.toString());
+            if (IS_DEBUG) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("drawGetFocusOrClickScaleAnim: ==isClicked=");
+                sb.append(this.isClicked);
+                sb.append("=GetFocusAnim=");
+                sb.append(this.getFocusAnim);
+                Log.d(TAG, sb.toString());
             }
 
             View var3 = this.tvRecyclerView.getFocusedView();
@@ -246,8 +257,8 @@ public class FocusBorderView extends View {
             }
 
             if (var3 != null) {
-                if (TvRecyclerView.IS_DEBUG) {
-                    Log.d("TvRecyclerView.FB", "startClickAnim: start click animation");
+                if (IS_DEBUG) {
+                    Log.d(TAG, "startClickAnim: start click animation");
                 }
 
                 this.isClicked = true;
@@ -277,8 +288,8 @@ public class FocusBorderView extends View {
         if (var1 != null) {
             var1.setLayerType(LAYER_TYPE_NONE, (Paint) null);
             if (this.tvRecyclerView.getFocusedView() != null) {
-                if (TvRecyclerView.IS_DEBUG) {
-                    Log.d("TvRecyclerView.FB", "startFocusAnim: start focus animation");
+                if (IS_DEBUG) {
+                    Log.d(TAG, "startFocusAnim: start focus animation");
                 }
 
                 this.getFocusAnim = true;

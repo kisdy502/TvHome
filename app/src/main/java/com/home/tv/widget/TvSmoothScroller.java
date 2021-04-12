@@ -44,8 +44,8 @@ public class TvSmoothScroller extends RecyclerView.SmoothScroller {
 
     public PointF mTargetVector;
 
-    public TvSmoothScroller(Context paramContext) {
-        this.mDisplayMetrics = paramContext.getResources().getDisplayMetrics();
+    public TvSmoothScroller(Context context) {
+        this.mDisplayMetrics = context.getResources().getDisplayMetrics();
     }
 
     private int clampApplyScroll(int paramInt1, int paramInt2) {
