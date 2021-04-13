@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="164dp"
-    android:layout_height="64dp"
+    android:layout_width="200dp"
+    android:layout_height="100dp"
     android:background="#33CCCCCC"
     android:focusable="true"
     android:focusableInTouchMode="true"
@@ -9,12 +9,18 @@
 
     <TextView
         android:id="@+id/txt_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:gravity="center"
         android:text="TV"
         android:textColor="#FF3C90A2"
         android:textSize="24dp" />
+
+    <View
+        android:background="#00CC00"
+        android:layout_width="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_height="1dp"/>
 
 </RelativeLayout>

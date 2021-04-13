@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,11 +28,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            RequestPermission requestPermission = new RequestPermission();
+            requestPermission.RequestPermission(this);
+        }
     }
 
     private void init() {
         tvRecyclerCategory = findViewById(R.id.tv_recycler_categorys);
         tvRecyclerChannel = findViewById(R.id.tv_recycler_channels);
+        tvRecyclerCategory.TAG = "tvRecyclerCategory";
+        tvRecyclerChannel.TAG = "tvRecyclerChannel";
         tvRecyclerCategory.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         tvRecyclerChannel.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         categoryList = Category.initCategoryList();
@@ -42,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
         tvRecyclerChannel.setAdapter(channelAdapter);
         tvRecyclerCategory.setItemSelected(5);
         tvRecyclerChannel.setItemSelected(10);
-        tvRecyclerCategory.setFocusDrawable(getResources().getDrawable(R.drawable.flowview01));
-        tvRecyclerChannel.setFocusDrawable(getResources().getDrawable(R.drawable.flowview02));
+        tvRecyclerCategory.setFocusDrawable(getResources().getDrawable(R.drawable.flowview02));
+        tvRecyclerChannel.setFocusDrawable(getResources().getDrawable(R.drawable.flowview01));
 
         tvRecyclerCategory.setOnItemStateListener(new TvRecyclerView.OnItemStateListener() {
             @Override
@@ -60,12 +67,12 @@ public class MainActivity extends AppCompatActivity {
         tvRecyclerCategory.setOnScrollStateListener(new TvRecyclerView.OnScrollStateListener() {
             @Override
             public void scrollToPrev(View view) {
-                Log.d(TAG,"scrollToPrev");
+                Log.d(TAG, "scrollToPrev");
             }
 
             @Override
             public void scrollToNext(View var1) {
-                Log.d(TAG,"scrollToNext");
+                Log.d(TAG, "scrollToNext");
             }
         });
 
@@ -98,12 +105,12 @@ public class MainActivity extends AppCompatActivity {
         tvRecyclerChannel.setOnScrollStateListener(new TvRecyclerView.OnScrollStateListener() {
             @Override
             public void scrollToPrev(View view) {
-                Log.i(TAG,"scrollToPrev");
+                Log.i(TAG, "scrollToPrev");
             }
 
             @Override
             public void scrollToNext(View var1) {
-                Log.i(TAG,"scrollToNext");
+                Log.i(TAG, "scrollToNext");
             }
         });
 

@@ -13,128 +13,124 @@
 //import android.view.animation.DecelerateInterpolator;
 //import android.widget.Scroller;
 //
-//import androidx.recyclerview.widget.RecyclerView;
+//import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 //
 //public class FocusBorderView2 extends View {
 //    private final static String TAG = "FocusBorderView";
+//    private final static boolean IS_DEBUG = false;
 //
 //    public TvRecyclerView tvRecyclerView;
 //    public final Scroller scroller;
-//    public boolean c;
+//    public boolean getFocusAnim;
 //    public boolean isClicked;
-//    public int e;
-//    public int f;
-//    public int g;
-//    public int q;
-//    public View targetDrawView = null;
+//    public int left;
+//    public int top;
+//    public int right;
+//    public int bottom;
+//    public View targetFocusView = null;
 //
-//    public FocusBorderView2(Context context) {
-//        super(context);
-//        this.scroller = new Scroller(context);
-//        this.c = false;
+//    public FocusBorderView2(Context var1) {
+//        super(var1);
+//        this.scroller = new Scroller(var1);
+//        this.getFocusAnim = false;
 //        this.isClicked = false;
-//        this.e = 0;
-//        this.f = 0;
-//        this.g = 0;
-//        this.q = 0;
+//        this.left = 0;
+//        this.top = 0;
+//        this.right = 0;
+//        this.bottom = 0;
 //    }
 //
-//    public void abortAnimation() {
+//    public void stopAnimation() {
 //        this.scroller.abortAnimation();
 //    }
 //
+//
 //    public final void drawFocus(Canvas canvas) {
-//        if (!this.c) {
-//            TvRecyclerView var2 = this.tvRecyclerView;
-//            if (!var2.c && !this.isClicked) {
-//                final View focusView = var2.getFocusView();
-//                boolean needMove;
-//                if (focusView == this.targetDrawView) {
-//                    needMove = false;
+//        if (!this.getFocusAnim) {
+//            if (!tvRecyclerView.startFocusMoveAnim && !this.isClicked) {
+//                final View focusedView = tvRecyclerView.getFocusedView();
+//                boolean isFocusChange;
+//                if (focusedView == this.targetFocusView) {
+//                    isFocusChange = false;
 //                } else {
-//                    needMove = true;
+//                    isFocusChange = true;
 //                }
 //
-//                if (focusView != null) {
-//                    int[] location = new int[2];
-//                    focusView.getLocationInWindow(location);
-//
-//                    StringBuilder var5 = new StringBuilder();
-//                    var5.append("drawFocus: ===itemLocationX===");
-//                    var5.append(location[0]);
-//                    var5.append("===itemLocationY==");
-//                    var5.append(location[1]);
-//                    Log.i(TAG, var5.toString());
-//
-//                    int var6 = focusView.getWidth();
-//                    int var7 = focusView.getHeight();
-//                    float var8 = this.tvRecyclerView.getScale();
-//                    RecyclerView.LayoutManager var22 = this.tvRecyclerView.getLayoutManager();
-//                    byte var9 = -1;
-//                    int var10;
-//                    var10 = -1;
-//
-//                    int var11 = var9;
-//                    if (this.tvRecyclerView.getLayoutManager() != null) {
-//                        var11 = var9;
+//                if (focusedView != null) {
+//                    int[] outLocation = new int[2];
+//                    focusedView.getLocationInWindow(outLocation);
+//                    if (IS_DEBUG) {
+//                        StringBuilder sb = new StringBuilder();
+//                        sb.append("drawFocus: ===itemLocationX===");
+//                        sb.append(outLocation[0]);
+//                        sb.append("===itemLocationY==");
+//                        sb.append(outLocation[1]);
+//                        Log.i(TAG, sb.toString());
+//                    }
+//                    int viewWidth = focusedView.getWidth();
+//                    int viewHeight = focusedView.getHeight();
+//                    float scale = this.tvRecyclerView.mFocusScale;
+//                    LayoutManager layoutManager = this.tvRecyclerView.getLayoutManager();
+//                    int var10 = -1;
+//                    int var11 = -1;
+//                    if (layoutManager != null) {
+//                        var11 = -1;
 //                    }
 //
-//                    float var12 = var8;
+//                    float targetScale = scale;
 //                    if (var10 > 0) {
-//                        var12 = var8;
+//                        targetScale = scale;
 //                        if (var11 > 0) {
-//                            var12 = Math.min((float) var11 * 1.4F / (float) var6, (float) var10 * 1.4F / (float) var7) + 1.0F;
+//                            targetScale = Math.min((float) var11 * 1.4F / (float) viewWidth, (float) var10 * 1.4F / (float) viewHeight) + 1.0F;
 //                        }
 //                    }
 //
-//                    var8 = (float) location[0];
-//                    float var13 = (float) location[1];
 //
-//                    StringBuilder var19 = new StringBuilder();
-//                    var19.append("drawFocus: ======itemPositionX=====");
-//                    var19.append(var8);
-//                    var19.append("===itemPositionY===");
-//                    var19.append(var13);
-//                    Log.i(TAG, var19.toString());
+//                    if (IS_DEBUG) {
+//                        StringBuilder sb = new StringBuilder();
+//                        sb.append("drawFocus: ======itemPositionX=====");
+//                        sb.append(outLocation[0]);
+//                        sb.append("===itemPositionY===");
+//                        sb.append(outLocation[1]);
+//                        Log.i(TAG, sb.toString());
+//                    }
 //
-//                    Drawable drawable = this.tvRecyclerView.getFocusDrawable();
 //
-//                    var11 = this.e;
-//                    var10 = this.g;
-//                    int var14 = this.f;
-//                    int var24 = this.q;
-//                    float var15 = var8 - (float) var11;
-//                    float var16 = var13 - (float) var14;
+//                    float drawPositionX = outLocation[0] - this.left;
+//                    float drawPositionY = outLocation[1] - this.top;
 //
-//                    var5 = new StringBuilder();
-//                    var5.append("drawFocus: ===drawPositionX==");
-//                    var5.append(var15);
-//                    var5.append("===drawPositionY===");
-//                    var5.append(var16);
-//                    Log.i(TAG, var5.toString());
+//                    if (IS_DEBUG) {
+//                        StringBuilder sb = new StringBuilder();
+//                        sb.append("drawFocus: ===drawPositionX==");
+//                        sb.append(drawPositionX);
+//                        sb.append("===drawPositionY===");
+//                        sb.append(drawPositionY);
+//                        Log.i(TAG, sb.toString());
+//                    }
 //
-//                    if (drawable != null) {
+//                    if (tvRecyclerView.getFocusDrawable() != null) {
 //                        canvas.save();
-//                        canvas.translate(var15, var16);
-//                        drawable.setBounds(0, 0, var6 + var11 + var10, var7 + var14 + var24);
-//                        drawable.draw(canvas);
+//                        canvas.translate(drawPositionX, drawPositionY);
+//                        tvRecyclerView.getFocusDrawable().setBounds(0, 0,
+//                                viewWidth + this.left + this.right, viewHeight + this.top + this.bottom);
+//                        tvRecyclerView.getFocusDrawable().draw(canvas);
 //                        canvas.restore();
 //                    }
 //
 //                    canvas.save();
-//                    canvas.translate(var8, var13);
-//                    focusView.draw(canvas);
+//                    canvas.translate(outLocation[0], outLocation[1]);
+//                    focusedView.draw(canvas);
 //                    canvas.restore();
-//                    this.setPivotX(var8 + (float) (var6 / 2));
-//                    this.setPivotY(var13 + (float) (var7 / 2));
-//                    if (needMove) {
+//                    this.setPivotX(outLocation[0] + (float) (viewWidth / 2));
+//                    this.setPivotY(outLocation[1] + (float) (viewHeight / 2));
+//                    if (isFocusChange) {
 //                        AnimatorSet animatorSet = new AnimatorSet();
-//                        var8 = (var12 - 1.0F) * 1.5F + 1.0F;
-//                        ObjectAnimator objectAnimatorX = ObjectAnimator.ofFloat(this, "scaleX", new float[]{1.0F, var8, var12});
-//                        ObjectAnimator objectAnimatorY = ObjectAnimator.ofFloat(this, "scaleY", new float[]{1.0F, var8, var12});
+//                        scale = (targetScale - 1.0F) * 1.5F + 1.0F;
+//                        ObjectAnimator scaleX = ObjectAnimator.ofFloat(this, "scaleX", new float[]{1.0F, scale, targetScale});
+//                        ObjectAnimator scaleY = ObjectAnimator.ofFloat(this, "scaleY", new float[]{1.0F, scale, targetScale});
 //                        animatorSet.setDuration(350L);
 //                        animatorSet.setInterpolator(new DecelerateInterpolator());
-//                        animatorSet.play(objectAnimatorX).with(objectAnimatorY);
+//                        animatorSet.play(scaleX).with(scaleY);
 //                        animatorSet.start();
 //                        animatorSet.addListener(new AnimatorListenerAdapter() {
 //                            public void onAnimationCancel(Animator animator) {
@@ -143,7 +139,7 @@
 //
 //                            public void onAnimationEnd(Animator animator) {
 //                                super.onAnimationEnd(animator);
-//                                FocusBorderView2.this.targetDrawView = focusView;
+//                                targetFocusView = focusedView;
 //                            }
 //                        });
 //                    }
@@ -153,12 +149,12 @@
 //
 //    }
 //
-//    public void b() {
-//        this.c = false;
+//    public void resetFocusAnim() {
+//        this.getFocusAnim = false;
 //    }
 //
 //    public final void drawFocusMoveAnim(Canvas canvas) {
-//        if (this.tvRecyclerView.c && TvRecyclerView.isDebug) {
+//        if (this.tvRecyclerView.startFocusMoveAnim && IS_DEBUG) {
 //            Log.d(TAG, "drawFocusMoveAnim: ==============");
 //        }
 //
@@ -170,41 +166,41 @@
 //
 //    public final void drawGetFocusOrClickScaleAnim(Canvas canvas) {
 //        if (this.isClicked) {
-//            if (TvRecyclerView.isDebug) {
+//            if (IS_DEBUG) {
 //                StringBuilder sb = new StringBuilder();
 //                sb.append("drawGetFocusOrClickScaleAnim: ==isClicked=");
 //                sb.append(this.isClicked);
 //                sb.append("=GetFocusAnim=");
-//                sb.append(this.c);
+//                sb.append(this.getFocusAnim);
 //                Log.d(TAG, sb.toString());
 //            }
 //
-//            View focusView = this.tvRecyclerView.getFocusView();
-//            if (focusView == null) {
+//            View focusedView = this.tvRecyclerView.getFocusedView();
+//            if (focusedView == null) {
 //                return;
 //            }
 //
-//            int var4 = focusView.getWidth();
-//            int var5 = focusView.getHeight();
-//            int[] var6 = new int[2];
-//            focusView.getLocationInWindow(var6);
+//            int width = focusedView.getWidth();
+//            int height = focusedView.getHeight();
+//            int[] outLocation = new int[2];
+//            focusedView.getLocationInWindow(outLocation);
 //            this.getLocationInWindow(new int[2]);
-//            Drawable drawable = this.tvRecyclerView.getFocusDrawable();
-//            if (drawable != null) {
-//                int var7 = this.e;
-//                int var8 = this.g;
-//                int var9 = this.f;
-//                int var10 = this.q;
+//            Drawable focusDrawable = this.tvRecyclerView.getFocusDrawable();
+//            if (focusDrawable != null) {
+////                int left = this.left;
+////                int var8 = this.right;
+////                int var9 = this.top;
+////                int var10 = this.bottom;
 //                canvas.save();
-//                canvas.translate((float) (var6[0] - this.e), (float) (var6[1] - this.f));
-//                drawable.setBounds(0, 0, var4 + var7 + var8, var5 + var9 + var10);
-//                drawable.draw(canvas);
+//                canvas.translate((float) (outLocation[0] - this.left), (float) (outLocation[1] - this.top));
+//                focusDrawable.setBounds(0, 0, width + this.left + this.right, height + this.top + this.bottom);
+//                focusDrawable.draw(canvas);
 //                canvas.restore();
 //            }
 //
 //            canvas.save();
-//            canvas.translate((float) var6[0], (float) var6[1]);
-//            focusView.draw(canvas);
+//            canvas.translate((float) outLocation[0], (float) outLocation[1]);
+//            focusedView.draw(canvas);
 //            canvas.restore();
 //        }
 //
@@ -214,7 +210,7 @@
 //    public void computeScroll() {
 //        if (this.scroller.computeScrollOffset()) {
 //            this.tvRecyclerView.getScale();
-//            if (this.c) {
+//            if (this.getFocusAnim) {
 //                this.scroller.getCurrX();
 //                this.scroller.getCurrY();
 //            } else if (this.isClicked) {
@@ -223,19 +219,16 @@
 //            }
 //            this.invalidate();
 //        } else {
-//            TvRecyclerView var1;
-//            if (this.c) {
-//                this.c = false;
-//                var1 = this.tvRecyclerView;
-//                if (var1 != null) {
-//                    var1.setLayerType(var1.layerType, (Paint) null);
+//            if (this.getFocusAnim) {
+//                this.getFocusAnim = false;
+//                if (tvRecyclerView != null) {
+//                    tvRecyclerView.setLayerType(tvRecyclerView.mLayerType, (Paint) null);
 //                    this.invalidate();
 //                }
 //            } else if (this.isClicked) {
 //                this.isClicked = false;
-//                var1 = this.tvRecyclerView;
-//                if (var1 != null) {
-//                    var1.setLayerType(var1.layerType, (Paint) null);
+//                if (tvRecyclerView != null) {
+//                    tvRecyclerView.setLayerType(tvRecyclerView.mLayerType, (Paint) null);
 //                    this.invalidate();
 //                }
 //            }
@@ -249,17 +242,18 @@
 //            int selectPosition = this.tvRecyclerView.getSelectPosition();
 //            View focusView;
 //            if (selectPosition >= 0 && selectPosition < this.tvRecyclerView.getAdapter().getItemCount()) {
-//                focusView = this.tvRecyclerView.getFocusView();
+//                focusView = this.tvRecyclerView.getFocusedView();
 //            } else {
 //                focusView = null;
 //            }
 //
 //            if (focusView != null) {
-//                if (TvRecyclerView.isDebug) {
+//                if (IS_DEBUG) {
 //                    Log.d(TAG, "startClickAnim: start click animation");
 //                }
+//
 //                this.isClicked = true;
-//                this.targetDrawView = null;
+//                this.targetFocusView = null;
 //                this.scroller.abortAnimation();
 //                this.scroller.startScroll(0, 0, 100, 100, 200);
 //                this.invalidate();
@@ -276,19 +270,19 @@
 //            this.drawFocusMoveAnim(canvas);
 //            this.drawFocus(canvas);
 //        }
+//
 //    }
 //
 //    public void startFocusAnim() {
-//        TvRecyclerView var1 = this.tvRecyclerView;
-//        if (var1 != null) {
-//            var1.setLayerType(LAYER_TYPE_NONE, (Paint) null);
-//            if (this.tvRecyclerView.getFocusView() != null) {
-//                if (TvRecyclerView.isDebug) {
+//        if (tvRecyclerView != null) {
+//            tvRecyclerView.setLayerType(LAYER_TYPE_NONE, (Paint) null);
+//            if (this.tvRecyclerView.getFocusedView() != null) {
+//                if (IS_DEBUG) {
 //                    Log.d(TAG, "startFocusAnim: start focus animation");
 //                }
 //
-//                this.c = true;
-//                this.targetDrawView = null;
+//                this.getFocusAnim = true;
+//                this.targetFocusView = null;
 //                this.scroller.abortAnimation();
 //                this.scroller.startScroll(0, 0, 100, 100, 245);
 //                this.invalidate();
@@ -297,11 +291,11 @@
 //
 //    }
 //
-//    public void setSelectPadding(int left, int top, int right, int bottom) {
-//        this.e = left;
-//        this.f = top;
-//        this.g = right;
-//        this.q = bottom;
+//    public void setSelectPadding(int l, int t, int r, int b) {
+//        this.left = l;
+//        this.top = t;
+//        this.right = r;
+//        this.bottom = b;
 //    }
 //
 //    public void setTvRecyclerView(TvRecyclerView tvRecyclerView) {
@@ -311,3 +305,4 @@
 //
 //    }
 //}
+//

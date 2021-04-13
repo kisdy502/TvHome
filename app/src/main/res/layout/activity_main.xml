@@ -10,19 +10,16 @@
         android:id="@+id/tv_recycler_categorys"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="32dp"
-        app:scrollMode="1"
-        android:layout_marginBottom="32dp" />
+        android:layout_marginLeft="20dp"
+        app:scrollMode="0" />
 
     <com.home.tv.widget.TvRecyclerView
         android:id="@+id/tv_recycler_channels"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginLeft="42dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="32dp"
-        android:layout_toRightOf="@+id/tv_recycler_categorys" />
+        android:layout_marginLeft="242dp"
+        android:layout_toRightOf="@+id/tv_recycler_categorys"
+        app:scrollMode="2" />
 
 
 </RelativeLayout>
