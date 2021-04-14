@@ -4,6 +4,7 @@ package com.home.tv.widget;
 import android.content.Context;
 import android.graphics.PointF;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 public class TvSmoothScroller extends RecyclerView.SmoothScroller {
+    public static final String TAG = "TvSmoothScroller";
     public static final boolean DEBUG = false;
 
     public static final float MILLISECONDS_PER_INCH = 25.0F;
@@ -82,7 +84,9 @@ public class TvSmoothScroller extends RecyclerView.SmoothScroller {
         if (o == null || !o.canScrollHorizontally())
             return 0;
         RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) paramView.getLayoutParams();
-        return calculateDtToFit(o.getDecoratedLeft(paramView) - ((ViewGroup.MarginLayoutParams) layoutParams).leftMargin, o.getDecoratedRight(paramView) + ((ViewGroup.MarginLayoutParams) layoutParams).rightMargin, o.getPaddingLeft(), o.getWidth() - o.getPaddingRight(), paramInt);
+        return calculateDtToFit(o.getDecoratedLeft(paramView) - ((ViewGroup.MarginLayoutParams) layoutParams).leftMargin,
+                o.getDecoratedRight(paramView) + ((ViewGroup.MarginLayoutParams) layoutParams).rightMargin,
+                o.getPaddingLeft(), o.getWidth() - o.getPaddingRight(), paramInt);
     }
 
     public int calculateDyToMakeVisible(View paramView, int paramInt) {
@@ -170,6 +174,9 @@ public class TvSmoothScroller extends RecyclerView.SmoothScroller {
         int i = calculateDxToMakeVisible(paramView, getHorizontalSnapPreference());
         int j = calculateDyToMakeVisible(paramView, getVerticalSnapPreference());
         int k = calculateTimeForDeceleration((int) Math.sqrt((i * i + j * j)));
+        Log.d(TAG, "calculateDxToMakeVisible:" + i);
+        Log.d(TAG, "calculateDyToMakeVisible:" + i);
+        Log.d(TAG, "calculateTimeForDeceleration:" + i);
         if (k > 0)
             action.update(-i, -j, k, (Interpolator) this.mDecelerateInterpolator);
     }
