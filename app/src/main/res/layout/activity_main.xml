@@ -20,7 +20,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="242dp"
         android:layout_toRightOf="@+id/tv_recycler_categorys"
-        app:scrollMode="2" />
+        app:scrollMode="1" />
 
 
 </RelativeLayout>
