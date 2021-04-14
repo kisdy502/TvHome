@@ -4,7 +4,6 @@
     android:layout_height="100dp"
     android:background="#33CCCCCC"
     android:focusable="true"
-    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
     <TextView
@@ -14,7 +13,7 @@
         android:layout_centerInParent="true"
         android:gravity="center"
         android:text="TV"
-        android:textColor="#FF3C90A2"
+        android:textColor="@color/category_item_color_selector"
         android:textSize="24dp" />
 
     <View

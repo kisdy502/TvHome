@@ -7,7 +7,6 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -17,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 
 public class FocusBorderView extends View {
     private final static String TAG = "FocusBorderView";
-    private final static boolean IS_DEBUG = false;
+    private final static boolean IS_DEBUG = true;
 
     public TvRecyclerView tvRecyclerView;
     public Scroller scroller;
@@ -42,10 +41,36 @@ public class FocusBorderView extends View {
 
     public void stopAnimation() {
         this.scroller.abortAnimation();
+
+        if (tvRecyclerView == null) {
+            return;
+        }
+        View focusedView = tvRecyclerView.getFocusedView();
+        if (focusedView == null) {
+            return;
+        }
+        final AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(focusedView, "scaleX", new float[]{1.0F});
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(focusedView, "scaleY", new float[]{1.0F});
+        animatorSet.setDuration(240L);
+        animatorSet.setInterpolator(new DecelerateInterpolator());
+        animatorSet.play(scaleX).with(scaleY);
+        animatorSet.start();
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+            public void onAnimationCancel(Animator animator) {
+                super.onAnimationCancel(animator);
+            }
+
+            public void onAnimationEnd(Animator animator) {
+                super.onAnimationEnd(animator);
+            }
+        });
+
+
     }
 
 
-    public final void drawFocus(Canvas canvas) {
+    public final void drawFocus(final Canvas canvas) {
         if (!this.getFocusAnim) {
             if (!tvRecyclerView.startFocusMoveAnim && !this.isClicked) {
                 final View focusedView = tvRecyclerView.getFocusedView();
@@ -57,7 +82,7 @@ public class FocusBorderView extends View {
                 }
 
                 if (focusedView != null) {
-                    int[] outLocation = new int[2];
+                    final int[] outLocation = new int[2];
                     focusedView.getLocationInWindow(outLocation);
                     if (IS_DEBUG) {
                         StringBuilder sb = new StringBuilder();
@@ -121,16 +146,16 @@ public class FocusBorderView extends View {
                     canvas.translate(outLocation[0], outLocation[1]);
                     focusedView.draw(canvas);
                     canvas.restore();
+
                     this.setPivotX(outLocation[0] + (float) (viewWidth / 2));
                     this.setPivotY(outLocation[1] + (float) (viewHeight / 2));
-//                    targetFocusView = focusedView;
 
                     if (isFocusChange) {
-                        AnimatorSet animatorSet = new AnimatorSet();
+                        final AnimatorSet animatorSet = new AnimatorSet();
                         scale = (targetScale - 1.0F) * 1.5F + 1.0F;
                         ObjectAnimator scaleX = ObjectAnimator.ofFloat(this, "scaleX", new float[]{1.0F, scale, targetScale});
                         ObjectAnimator scaleY = ObjectAnimator.ofFloat(this, "scaleY", new float[]{1.0F, scale, targetScale});
-                        animatorSet.setDuration(350L);
+                        animatorSet.setDuration(240L);
                         animatorSet.setInterpolator(new DecelerateInterpolator());
                         animatorSet.play(scaleX).with(scaleY);
                         animatorSet.start();
@@ -142,6 +167,24 @@ public class FocusBorderView extends View {
                             public void onAnimationEnd(Animator animator) {
                                 super.onAnimationEnd(animator);
                                 targetFocusView = focusedView;
+                            }
+                        });
+
+                        //字体未放大的bug
+                        AnimatorSet animatorSet2 = new AnimatorSet();
+                        ObjectAnimator scaleX2 = ObjectAnimator.ofFloat(focusedView, "scaleX", new float[]{1.0F, scale, targetScale});
+                        ObjectAnimator scaleY2 = ObjectAnimator.ofFloat(focusedView, "scaleY", new float[]{1.0F, scale, targetScale});
+                        animatorSet2.setDuration(240L);
+                        animatorSet2.setInterpolator(new DecelerateInterpolator());
+                        animatorSet2.play(scaleX2).with(scaleY2);
+                        animatorSet2.start();
+                        animatorSet2.addListener(new AnimatorListenerAdapter() {
+                            public void onAnimationCancel(Animator animator) {
+                                super.onAnimationCancel(animator);
+                            }
+
+                            public void onAnimationEnd(Animator animator) {
+                                super.onAnimationEnd(animator);
                             }
                         });
                     }
@@ -159,7 +202,7 @@ public class FocusBorderView extends View {
 
     public final void drawFocusMoveAnim(Canvas canvas) {
         if (this.tvRecyclerView.startFocusMoveAnim && IS_DEBUG) {
-            Log.d(TAG, "drawFocusMoveAnim: ==============");
+            //Log.d(TAG, "drawFocusMoveAnim: ==============");
         }
 
     }
@@ -188,23 +231,18 @@ public class FocusBorderView extends View {
             int height = focusedView.getHeight();
             int[] outLocation = new int[2];
             focusedView.getLocationInWindow(outLocation);
-            this.getLocationInWindow(new int[2]);
-            Drawable focusDrawable = this.tvRecyclerView.getFocusDrawable();
-            if (focusDrawable != null) {
-//                int left = this.left;
-//                int var8 = this.right;
-//                int var9 = this.top;
-//                int var10 = this.bottom;
+//            this.getLocationInWindow(new int[2]);
+            if (tvRecyclerView.getFocusDrawable() != null) {
                 canvas.save();
                 canvas.translate((float) (outLocation[0] - this.left), (float) (outLocation[1] - this.top));
-                focusDrawable.setBounds(0, 0, width + this.left + this.right, height + this.top + this.bottom);
-                focusDrawable.draw(canvas);
+                tvRecyclerView.getFocusDrawable().setBounds(0, 0, width + this.left + this.right, height + this.top + this.bottom);
+                tvRecyclerView.getFocusDrawable().draw(canvas);
                 canvas.restore();
             }
 
             canvas.save();
             canvas.translate((float) outLocation[0], (float) outLocation[1]);
-            focusedView.draw(canvas);
+            tvRecyclerView.getFocusDrawable().draw(canvas);
             canvas.restore();
         }
 

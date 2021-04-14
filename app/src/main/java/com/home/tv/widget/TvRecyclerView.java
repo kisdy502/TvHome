@@ -14,9 +14,9 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.os.Build.VERSION;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.FocusFinder;
@@ -187,7 +187,7 @@ public class TvRecyclerView extends RecyclerView {
                 this.setFocusDrawable(drawable);
             }
 
-            this.mFocusScale = typedArray.getFloat(R.styleable.TvRecyclerView_focusScale, 1.24F);
+            this.mFocusScale = typedArray.getFloat(R.styleable.TvRecyclerView_focusScale, 1.06F);
             mAutoProcessFocus = typedArray.getBoolean(R.styleable.TvRecyclerView_isAutoProcessFocus, true);
             if (!mAutoProcessFocus) {
                 this.mFocusScale = 1.0F;
@@ -474,9 +474,11 @@ public class TvRecyclerView extends RecyclerView {
 
             if (IS_DEBUG) {
                 StringBuilder sb = new StringBuilder();
-                sb.append("dispatchKeyEvent: mNextFocused=");
+                sb.append("dispatchKeyEvent: mSelectedPosition=");
+                sb.append(this.mSelectedPosition);
+                sb.append(",mNextFocused=");
                 sb.append(this.mNextFocused);
-                sb.append("=nextPos=");
+                sb.append(",nextPos=");
                 sb.append(this.getChildAdapterPosition(this.mNextFocused));
                 Log.d(TAG, sb.toString());
             }
@@ -650,23 +652,22 @@ public class TvRecyclerView extends RecyclerView {
         int viewSize;
         int height;
         if (this.mOrientation == HORIZONTAL) {
-            direction = this.mDirection;
-            if (direction != -1 && (direction == FOCUS_UP || direction == FOCUS_DOWN)) {
+
+            if (mDirection != -1 && (mDirection == FOCUS_UP || mDirection == FOCUS_DOWN)) {
                 return 0;
             }
 
             viewSize = view.getLeft() + view.getWidth() / 2;
             height = this.getTvRecyclerViewRealSize() / 2;
         } else {
-            direction = this.mDirection;
-            if (direction != -1 && (direction == FOCUS_LEFT || direction == FOCUS_RIGHT)) {
+            if (mDirection != -1 && (mDirection == FOCUS_LEFT || mDirection == FOCUS_RIGHT)) {
                 return 0;
             }
 
             viewSize = view.getTop() + view.getHeight() / 2;
             height = this.getTvRecyclerViewRealSize() / 2;
         }
-        Log.d(TAG, "viewSize:" + viewSize + ",half height:" + height + ",clac result:" + (viewSize - height));
+        Log.d(TAG, "viewSize:" + viewSize + ",half height:" + height + ",calc result:" + (viewSize - height));
         return viewSize - height;
     }
 
@@ -685,10 +686,9 @@ public class TvRecyclerView extends RecyclerView {
 
     @Override
     public boolean isInTouchMode() {
-        boolean inTouchMode = super.isInTouchMode();
-        boolean result = inTouchMode;
+        boolean result = super.isInTouchMode();
         if (VERSION.SDK_INT == 19) {
-            if (this.hasFocus() && !inTouchMode) {
+            if (this.hasFocus() && !result) {
                 result = false;
             } else {
                 result = true;
@@ -705,13 +705,13 @@ public class TvRecyclerView extends RecyclerView {
         this.mSelectedPosition = 0;
         this.mNextFocused = null;
         this.isOnLayouting = false;
-        this.mFocusScale = 1.00F;
+        this.mFocusScale = 1.0F;
         this.mAutoProcessFocus = true;
-        this.focusBorderPaddingLeft = 22;
-        this.focusBorderPaddingTop = 22;
-        this.focusBorderPaddingRight = 22;
-        this.focusBorderPaddingBottom = 22;
-        this.mOrientation = HORIZONTAL;
+        this.focusBorderPaddingLeft = 0;
+        this.focusBorderPaddingTop = 0;
+        this.focusBorderPaddingRight = 0;
+        this.focusBorderPaddingBottom = 0;
+        this.mOrientation = VERTICAL;
     }
 
     public final boolean viewPartVisible(View view) {
@@ -729,7 +729,7 @@ public class TvRecyclerView extends RecyclerView {
                         result = true;
                     }
                 }
-                Log.d(TAG, "j:" + result);
+                Log.d(TAG, "view 是否部分可见:" + result);
                 return result;
             } else {
                 if (partVisible) {
@@ -824,10 +824,10 @@ public class TvRecyclerView extends RecyclerView {
     public void onFocusChanged(boolean gainFocus, int var2, Rect rect) {
         super.onFocusChanged(gainFocus, var2, rect);
         if (IS_DEBUG) {
-            StringBuilder var4 = new StringBuilder();
-            var4.append("onFocusChanged: gainFocus==");
-            var4.append(gainFocus);
-            Log.d(TAG, var4.toString());
+            StringBuilder sb = new StringBuilder();
+            sb.append("onFocusChanged: gainFocus==");
+            sb.append(gainFocus);
+            Log.d(TAG, sb.toString());
         }
 
         if (!gainFocus) {
@@ -848,6 +848,7 @@ public class TvRecyclerView extends RecyclerView {
             if (gainFocus) {
                 this.mFocusBorderView.bringToFront();
             }
+            mFocusBorderView.stopAnimation();
             if (mFocusedView != null) {
                 if (gainFocus) {
                     mFocusedView.setSelected(true);
@@ -1024,11 +1025,11 @@ public class TvRecyclerView extends RecyclerView {
             }
 
             if (temp >= first && temp <= last) {
-                View var5 = this.getChildAt(temp - first);
-                this.mNextFocused = var5;
+                View view = this.getChildAt(temp - first);
+                this.mNextFocused = view;
                 if (this.mAutoProcessFocus && !this.startFocusMoveAnim) {
                     Log.d(TAG, "setItemSelectedx1:" + mSelectedPosition + "," + position);
-                    this.scrollDistance(var5, true);
+                    this.scrollDistance(view, true);
                 } else {
                     this.mNextFocused.requestFocus();
                 }

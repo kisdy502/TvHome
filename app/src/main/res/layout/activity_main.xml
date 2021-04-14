@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginLeft="20dp"
+        app:isAutoProcessFocus="true"
         app:scrollMode="0" />
 
     <com.home.tv.widget.TvRecyclerView

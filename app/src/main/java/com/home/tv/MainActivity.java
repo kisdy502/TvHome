@@ -39,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
         tvRecyclerChannel = findViewById(R.id.tv_recycler_channels);
         tvRecyclerCategory.TAG = "tvRecyclerCategory";
         tvRecyclerChannel.TAG = "tvRecyclerChannel";
-        tvRecyclerCategory.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        tvRecyclerChannel.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        tvRecyclerCategory.setLayoutManager(new LinearLayoutManager(this));
+        tvRecyclerChannel.setLayoutManager(new LinearLayoutManager(this));
         categoryList = Category.initCategoryList();
         channelList = Channel.initChannelList();
         categoryAdapter = new CategoryAdapter(getApplicationContext(), categoryList);
